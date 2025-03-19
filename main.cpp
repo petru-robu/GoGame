@@ -7,8 +7,6 @@
 
 #include <Helper.h>
 
-#include "ResourceManager.hpp"
-
 //////////////////////////////////////////////////////////////////////
 /// This class is used to test that the memory leak checks work as expected even when using a GUI
 class SomeClass {
@@ -20,18 +18,6 @@ SomeClass *getC() {
     return new SomeClass{2};
 }
 //////////////////////////////////////////////////////////////////////
-
-void PersonalizeazaAvion(sf::Sprite& avion)
-{
-    avion.setScale({0.3f, 0.3f});
-    avion.setPosition({400, 350});
-
-    sf::FloatRect bounds = avion.getGlobalBounds();
-    avion.setOrigin({
-        bounds.position.x + bounds.size.x / 2,
-        bounds.position.y + bounds.size.y / 2
-    });
-}
 
 int main() {
     ///////////////////////////////////////////////////////////////////////////
@@ -68,25 +54,6 @@ int main() {
 
     // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
 
-    sf::Font font = ResourceManager::Instance().getFont("FiraSans-Regular.ttf");
-
-    sf::Texture avion_texture;
-    sf::Text tip_avion(font);
-    // sf::Texture dummyTexture; // @
-
-    try {
-        avion_texture = ResourceManager::Instance().getTexture("airplane.png");
-        // dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png"); // @
-    } catch(std::exception& exp) {
-        std::cout << exp.what() << std::endl;
-        return 0;
-    }
-
-    sf::Sprite avion(avion_texture);
-
-    PersonalizeazaAvion(avion); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
-
-    tip_avion.setString("An airplane");
 
     while(window.isOpen()) {
         bool shouldExit = false;
@@ -119,14 +86,7 @@ int main() {
         std::this_thread::sleep_for(150ms);
 
 
-        float new_angle = avion.getRotation().asDegrees() + 1;
-        sf::Angle angle = sf::degrees(new_angle);
-        avion.setRotation(angle);
-
         window.clear();
-
-        window.draw(avion); // Afișăm avionul încărcat pe ecran
-        window.draw(tip_avion); // Afișăm tipul avionului
 
         window.display();
     }

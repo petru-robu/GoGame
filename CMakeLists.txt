@@ -57,10 +57,14 @@ endif()
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
-    ./src/Helper.cpp
-    ResourceManager.cpp
-    ResourceManager.hpp
+    ./src/main.cpp
+    ./src/backend_board.cpp
+    ./src/game_context.cpp
+    ./src/game_window.cpp
+    ./src/game.cpp
+    ./src/menus.cpp
+    ./src/ui_elements.cpp
+    ./src/visual_board.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -73,7 +77,7 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 ###############################################################################
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
-target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ./include)
+target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ./inc)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
 target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
