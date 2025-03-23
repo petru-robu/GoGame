@@ -28,6 +28,8 @@ public:
     int getCoordY();
 
     void Render() override;
+
+    ~Cell();
 };
 
 class Piece: public Cell<sf::CircleShape>

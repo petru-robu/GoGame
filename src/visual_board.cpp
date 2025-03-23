@@ -53,6 +53,11 @@ void Cell<DT>::Render()
     window.draw(drawable_cell);
 }
 
+template <typename DT> 
+Cell<DT>::~Cell()
+{
+}
+
 Piece::Piece(sf::RenderWindow& window, int coord_x, int coord_y, int cell_size, sf::Vector2f pos): 
 Cell<sf::CircleShape>(window, coord_x, coord_y, cell_size, pos)
 {

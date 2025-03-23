@@ -10,7 +10,6 @@ protected:
 
 public:
     IDrawable(sf::RenderWindow& window): window(window){}
-
     virtual void Render() = 0;
 };
 
