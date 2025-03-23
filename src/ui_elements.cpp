@@ -30,14 +30,15 @@ void Label::loadProprieties()
 }
 
 /* Setters */
-void Label::setColor(sf::Color color)
+void Label::setColor(sf::Color c)
 {
+    color = c;
     text.setFillColor(color);
 }
 
-void Label::setPosition(sf::Vector2f position)
+void Label::setPosition(sf::Vector2f pos)
 {
-    this->position = position;
+    position = pos;
     text.setPosition(position);
 }
 
