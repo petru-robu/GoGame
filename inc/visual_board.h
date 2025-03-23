@@ -46,7 +46,7 @@ public:
     bool isHovered();
     bool isPlaced();
 
-    virtual ~Piece();
+    ~Piece() override;
 };
 
 
