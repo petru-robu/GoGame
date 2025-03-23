@@ -107,7 +107,7 @@ endif()
 # Exemplu 2: Avem un folder cu font-uri numit `fonts`, un folder cu imagini numit `images` și un folder cu sunete numit `sounds`
 #       => copy_files(DIRECTORY fonts images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # Pentru exemplul din main.cpp avem nevoie de folder-ul `images` și de folder-ul `fonts`.
-copy_files(DIRECTORY images fonts COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(DIRECTORY fonts COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 
 # Dacă avem nevoie de fișiere care nu sunt organizate într-un folder folosim tot funcția `copy_files()`
 # Exemplu general: copy_files(FILES fisier1.json fisier2.txt fisier3.in COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
