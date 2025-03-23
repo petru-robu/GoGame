@@ -5,7 +5,6 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
-#include "menu.h"
 #include "menus.h"
 #include "game_context.h"
 #include "game_window.h"

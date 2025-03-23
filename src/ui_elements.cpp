@@ -30,21 +30,8 @@ void Label::loadProprieties()
 }
 
 /* Setters */
-void Label::setStr(std::string str)
-{
-    this->str = str;
-    loadProprieties();
-}
-
-void Label::setChSize(float ch_size)
-{
-    this->ch_size = ch_size;
-    loadProprieties();
-}
-
 void Label::setColor(sf::Color color)
 {
-    this->color = color;
     text.setFillColor(color);
 }
 
@@ -55,21 +42,6 @@ void Label::setPosition(sf::Vector2f position)
 }
 
 /* Getters */
-std::string Label::getStr()
-{
-    return str;
-}
-
-float Label::getChSize()
-{
-    return ch_size;
-}
-
-sf::Color Label::getColor()
-{
-    return color;
-}
-
 sf::Vector2f Label::getPosition()
 {   
     return position;

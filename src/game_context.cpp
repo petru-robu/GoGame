@@ -1,7 +1,10 @@
 #include "../inc/game_context.h"
 
 GameContext::GameContext(int gs): game_size(gs)
-{}
+{
+    state = GameState::MAIN_MENU;
+    prev_state = GameState::UNDEFINED;
+}
 
 //setters
 void GameContext::setState(GameState ns)
@@ -11,10 +14,6 @@ void GameContext::setState(GameState ns)
 void GameContext::setPrevState(GameState ps)
 {
     prev_state = ps;
-}
-void GameContext::setGameSize(int gs)
-{
-    game_size = gs;
 }
 
 //getters

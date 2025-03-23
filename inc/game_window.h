@@ -12,9 +12,9 @@ private:
     
 public:
     GameWindow(sf::RenderWindow &window, GameContext &ctx);
-    void EventHandler(const std::optional<sf::Event> &event);
-    void Render();
-    void Process();
+    void EventHandler(const std::optional<sf::Event> &event) override;
+    void Render() override;
+    void Process() override;
 };
 
 #endif

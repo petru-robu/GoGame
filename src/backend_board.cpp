@@ -31,15 +31,6 @@ BackendPiece& BackendPiece::operator=(const BackendPiece& bp)
     return *this;
 }
 
-std::pair<int,int> BackendPiece::getCoords()
-{
-    return coords;
-}
-int BackendPiece::getType()
-{
-    return type;
-}
-
 /*board*/
 BackendBoard::BackendBoard(GameContext& ctx): ctx(ctx)
 {
@@ -58,7 +49,7 @@ void BackendBoard::addStone(int cx, int cy, int type)
     board_matrix[cx][cy] = type;
 }
 
-std::vector<std::vector<int>> BackendBoard::getBoardMatrix()
+const std::vector<std::vector<int>>& BackendBoard::getBoardMatrix()
 {
     return board_matrix;
 }

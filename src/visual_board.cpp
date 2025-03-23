@@ -81,7 +81,7 @@ bool Piece::isPlaced()
 VisualBoard::VisualBoard(sf::RenderWindow& window, GameContext& ctx): 
 IDrawable(window), ctx(ctx), bb(ctx)
 {
-    int board_size = 900;
+    float board_size = 900;
     float cornerX = 500, cornerY = 10;
     int game_size = ctx.getGameSize();
     
@@ -98,8 +98,8 @@ IDrawable(window), ctx(ctx), bb(ctx)
         std::vector<Piece> cell_line;
         for(int j=0; j<game_size; j++)
         {
-            int currX = cornerX + (i)*cell_size;
-            int currY = cornerY + (j)*cell_size;
+            float currX = cornerX + (i)*cell_size;
+            float currY = cornerY + (j)*cell_size;
             
             Piece piece(window, i, j, cell_size, {currX, currY});
             piece.setColor(sf::Color::Black);
@@ -130,8 +130,8 @@ IDrawable(window), ctx(ctx), bb(ctx)
 
 void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
 {
-    int mx = mouse_pos.x;
-    int my = mouse_pos.y;
+    float mx = mouse_pos.x;
+    float my = mouse_pos.y;
 
     for(auto &vec:piece_grid)
     {
@@ -152,8 +152,8 @@ void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
 
 void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, int mouse_click_type)
 {
-    int mx = mouse_pos.x;
-    int my = mouse_pos.y;
+    float mx = mouse_pos.x;
+    float my = mouse_pos.y;
 
     for(auto &vec:piece_grid)
     {

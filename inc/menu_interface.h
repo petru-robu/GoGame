@@ -16,6 +16,8 @@ public:
     virtual void Render() = 0;
     virtual void Process() = 0;
     virtual void EventHandler(const std::optional<sf::Event> &event) = 0;
+
+    virtual ~IMenu() = default;
     
 };
 

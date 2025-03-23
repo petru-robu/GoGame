@@ -2,8 +2,9 @@
 
 Game::Game(): ctx(13)
 {
-    int window_width = 1920;
-    int window_height = 1080;
+    unsigned int window_width = 1920;
+    unsigned int window_height = 1080;
+
     window.create(sf::VideoMode({window_width, window_height}), "Go Game!");
     window.setFramerateLimit(60);
 

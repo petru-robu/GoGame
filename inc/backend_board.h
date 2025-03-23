@@ -22,9 +22,6 @@ class BackendPiece
         friend bool operator!=(const BackendPiece& p1, const BackendPiece& p2);
 
         BackendPiece& operator=(const BackendPiece& bp);
-
-        std::pair<int,int> getCoords();
-        int getType();
 };
 
 class BackendBoard
@@ -34,10 +31,10 @@ private:
     std::vector<std::vector<int>> board_matrix;
 
 public:
-    BackendBoard(GameContext& ctx);
+    explicit BackendBoard(GameContext& ctx);
 
     void addStone(int cx, int cy, int val);
-    std::vector<std::vector<int>> getBoardMatrix();
+    const std::vector<std::vector<int>>& getBoardMatrix();
     
     friend std::ostream& operator<<(std::ostream& os, const BackendBoard& backend_board);
 
