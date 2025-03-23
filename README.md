@@ -122,13 +122,10 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
 
-## Instrucțiuni de compilare
-
-
-## Resurse
+## Resources
 
 - [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
-- [Poza cu avionul](https://pixabay.com/vectors/travel-holiday-trip-flight-6913775/)
-- [Font](https://fonts.google.com/selection?selection.family=Fira+Sans)
-- adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
+- [Robot-Crush Font](https://www.dafont.com/robot-crush.font)
+- [Shuriken Font](https://www.dafont.com/the-last-shuriken.font)
+- [Arial Font](https://font.download/font/arial)
