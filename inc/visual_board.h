@@ -45,6 +45,8 @@ public:
     void setPlaced(bool b);
     bool isHovered();
     bool isPlaced();
+
+    ~Piece();
 };
 
 

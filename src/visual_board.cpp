@@ -81,7 +81,10 @@ bool Piece::isPlaced()
 {
     return placed;
 }
-
+Piece::~Piece()
+{
+    
+}
 
 VisualBoard::VisualBoard(sf::RenderWindow& window, GameContext& ctx): 
 IDrawable(window), ctx(ctx), bb(ctx)
