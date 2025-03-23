@@ -75,7 +75,6 @@ sf::Vector2f Label::getPosition()
     return position;
 }
 
-
 sf::FloatRect Label::getBounds()
 {
     return text.getGlobalBounds();

@@ -7,9 +7,9 @@
 class IMenu
 {
 protected:
-    GameContext& ctx;
     sf::RenderWindow& window;
-
+    GameContext& ctx;
+    
 public:
     IMenu(sf::RenderWindow& window, GameContext&ctx): window(window), ctx(ctx){}
     

@@ -4,16 +4,14 @@ GameWindow::GameWindow(sf::RenderWindow &window, GameContext &ctx):
 IMenu(window, ctx),
 visual_board(window, ctx)
 {
-    float wx = window.getSize().x;
-    float wy = window.getSize().y;
 }
 
 void GameWindow::EventHandler(const std::optional<sf::Event> &event)
 {
     if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
     {
-        float mx = mouseButtonPressed->position.x;
-        float my = mouseButtonPressed->position.y;
+        int mx = mouseButtonPressed->position.x;
+        int my = mouseButtonPressed->position.y;
 
         if (mouseButtonPressed->button == sf::Mouse::Button::Left)
         {
