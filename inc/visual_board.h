@@ -29,7 +29,7 @@ public:
 
     void Render() override;
 
-    ~Cell();
+    virtual ~Cell();
 };
 
 class Piece: public Cell<sf::CircleShape>
@@ -46,7 +46,7 @@ public:
     bool isHovered();
     bool isPlaced();
 
-    ~Piece();
+    virtual ~Piece();
 };
 
 
