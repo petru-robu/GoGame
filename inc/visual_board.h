@@ -49,6 +49,19 @@ public:
     ~Piece() override;
 };
 
+class Liberty: public Cell<sf::RectangleShape>
+{
+private:
+    bool placed;
+    
+public:
+    Liberty(sf::RenderWindow& window, int coord_x, int coord_y, int cell_size, sf::Vector2f pos);
+    ~Liberty() override;
+
+    void setPlaced(bool b);
+    bool isPlaced();
+};
+
 
 class VisualBoard: public IDrawable
 {
@@ -62,6 +75,7 @@ private:
     std::vector<sf::RectangleShape> grid_linesY;
 
     std::vector<std::vector<Piece>> piece_grid;
+    std::vector<std::vector<Liberty>> liberty_grid;
 
 public:
     VisualBoard(sf::RenderWindow& window, GameContext &ctx);

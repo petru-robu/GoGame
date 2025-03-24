@@ -6,13 +6,16 @@ IDrawable(window), coord_x(coord_x), coord_y(coord_y),
 cell_size(cell_size), position(pos)
 {
     if constexpr (std::is_same_v<DT, sf::CircleShape>)
+    {
         drawable_cell.setRadius(cell_size / 2);
+        drawable_cell.setPosition(position);
+    }
     else
     {
         drawable_cell.setSize({cell_size, cell_size});
+        drawable_cell.setPosition({position.x + cell_size/2, position.y + cell_size/2});
     }
-    
-    drawable_cell.setPosition(position);
+
 }
 
 /*Setters & Getters*/
@@ -58,6 +61,7 @@ Cell<DT>::~Cell()
 {
 }
 
+/*Piece*/
 Piece::Piece(sf::RenderWindow& window, int coord_x, int coord_y, int cell_size, sf::Vector2f pos): 
 Cell<sf::CircleShape>(window, coord_x, coord_y, cell_size, pos)
 {
@@ -84,6 +88,26 @@ bool Piece::isPlaced()
 Piece::~Piece()
 {
     
+}
+
+/*Liberty*/
+Liberty::Liberty(sf::RenderWindow& window, int coord_x, int coord_y, int cell_size, sf::Vector2f pos):
+Cell<sf::RectangleShape>(window, coord_x, coord_y, cell_size/2, pos)
+{
+}
+
+Liberty::~Liberty()
+{
+
+}
+
+void Liberty::setPlaced(bool p)
+{
+    placed = p;
+}
+bool Liberty::isPlaced()
+{
+    return placed;
 }
 
 VisualBoard::VisualBoard(sf::RenderWindow& window, GameContext& ctx): 
@@ -114,6 +138,21 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
             cell_line.push_back(piece);
         }
         piece_grid.push_back(cell_line);
+    }
+
+    for(int i=0; i<game_size; i++)
+    {
+        std::vector<Liberty> cell_line;
+        for(int j=0; j<game_size; j++)
+        {
+            float currX = cornerX + (i)*cell_size;
+            float currY = cornerY + (j)*cell_size;
+            
+            Liberty lib(window, i, j, cell_size, {currX, currY});
+            lib.setColor(sf::Color::Black);
+            cell_line.push_back(lib);
+        }
+        liberty_grid.push_back(cell_line);
     }
 
     cornerX += cell_size/2;
@@ -184,22 +223,19 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, int mouse_click_type)
             }
         }       
     }
-
-    /*Print backend_board for debugging.*/
-    std::cout<<"The backend board is: \n"<<backend_board<<'\n';
 }
 
 void VisualBoard::process()
 {
-    std::vector<std::vector<CellType>> board_matrix = backend_board.getBoardMatrix();
+    std::vector<std::vector<Intersection>> board_matrix = backend_board.getBoardMatrix();
     int gs = ctx.getGameSize();
 
     for(int i=0; i<gs; i++)
         for(int j=0; j<gs; j++)
         {
-            CellType cell_type = board_matrix[i][j];
+            CellType cell_type = board_matrix[i][j].getType();
 
-            if(cell_type != CellType::EMPTY)
+            if(cell_type == CellType::BLACK || cell_type == CellType::WHITE)
             {
                 piece_grid[i][j].setPlaced(true);
 
@@ -212,6 +248,24 @@ void VisualBoard::process()
                     piece_grid[i][j].setColor(sf::Color::White);
                 }
             }
+            else
+                piece_grid[i][j].setPlaced(false);
+            
+
+            if(cell_type == CellType::WHITE_LIBERTY || cell_type == CellType::BLACK_LIBERTY)
+            {
+                liberty_grid[i][j].setPlaced(true);
+                if(cell_type == CellType::BLACK_LIBERTY)
+                {
+                    liberty_grid[i][j].setColor(sf::Color::Black);
+                }
+                else if(cell_type == CellType::WHITE_LIBERTY)
+                {
+                    liberty_grid[i][j].setColor(sf::Color::White);
+                }
+            }
+            else
+                liberty_grid[i][j].setPlaced(false);
         }
 
 }
@@ -233,6 +287,15 @@ void VisualBoard::Render()
         {
             if(piece.isPlaced() || piece.isHovered())
                 window.draw(piece.getDrawableShape());
+        }
+    }
+
+    for(auto &line:liberty_grid)
+    {
+        for(auto &liberty:line)
+        {
+            if(liberty.isPlaced())
+                window.draw(liberty.getDrawableShape());
         }
     }
 }
