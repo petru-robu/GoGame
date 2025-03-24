@@ -17,8 +17,8 @@ std::ostream& operator<<(std::ostream& os, CellType& cell_type)
 }
 
 /*Intersection*/
-Intersection::Intersection(GameContext& ctx, std::pair<int, int> coords, CellType type): 
-ctx(ctx), coords(coords), type(type)
+Intersection::Intersection(std::pair<int, int> coords, CellType type): 
+coords(coords), type(type)
 {
     group = nullptr;
 }
@@ -108,7 +108,7 @@ BackendBoard::BackendBoard(GameContext& ctx): ctx(ctx)
         std::vector<Intersection> line;
         for(int j=0; j<gs; j++)
         {
-            line.push_back(Intersection(ctx, {i, j}, CellType::EMPTY));
+            line.push_back(Intersection({i, j}, CellType::EMPTY));
         }
         board_matrix.push_back(line);
     }
@@ -230,7 +230,7 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
         Group* group_of_liberty = curr_inter->getGroup();
         group_of_liberty->removeLiberty(curr_inter);
 
-        std::cout<<"Placing on "<<initial_type<<' '<<group_of_liberty->get_liberties().size()<<'\n';
+        //std::cout<<"Placing on "<<initial_type<<' '<<group_of_liberty->get_liberties().size()<<'\n';
 
         if(group_of_liberty->get_liberties().size() == 0)
         {   

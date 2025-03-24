@@ -38,14 +38,12 @@ class Group;
 class Intersection
 {
 private:
-    GameContext& ctx;
-
     std::pair<int, int> coords;
     CellType type;
     Group* group;
 
 public:
-    explicit Intersection(GameContext& ctx, std::pair<int, int> coords, CellType type);
+    explicit Intersection(std::pair<int, int> coords, CellType type);
 
 
     void setType(CellType type);
