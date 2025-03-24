@@ -2,8 +2,8 @@
 An implementation of the Game of Go, done in C++ using the SFML library. The application simulates the go rules and applies them to the board. The game can be played locally by two players or against an AI integrated in the application.
 
 ## Compilation instructions
-The project is configured via [Cmake](https://cmake.org/).
-0. Necessary libraries on linux (assuming debian installation)
+The project is configured via [CMake](https://cmake.org/).
+0. Necessary libraries on linux (assuming debian installation).
 ```sh
 sudo apt-get update && \
   sudo apt-get install libxrandr-dev \
@@ -22,12 +22,10 @@ sudo apt-get update && \
 1. Configuration
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-# sau ./scripts/cmake.sh configure
-```
+# or ./scripts/cmake.sh configure
 
-On Windows with GCC:
-```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
+# On Windows with GCC:
+# cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
 # sau ./scripts/cmake.sh configure -g Ninja
 ```
 
@@ -42,6 +40,22 @@ cmake --build build --config Debug --parallel 6
 cmake --install build --config Debug --prefix install_dir
 # or ./scripts/cmake.sh install
 ```
+
+## Implementation details
+The application is structured in the follwing sections: frontend, backend and AI integration.
+
+### Frontend
+The frontend was done using the [SFML library](https://www.sfml-dev.org/), a very useful tool for creating GUI in C++.
+The application makes use of some classes that deal with the visual aspect of the game: 
+- First of all, there is a menu system implemented. This is done by implementing an interface and down casting diffrent types of menus depending on the current state of the game.
+- Second of all, SFML only provides acces to various components of the PC, graphics, audio, network, etc. So, I implemented UI elements, like labels, buttons, sliders and more.
+
+### Backend
+The backend is the most intricate part of the implementation. I decided to go with the following when implementing the game logic:
+- The backend consists of a grid of Intersections. Every intersection is of a certain type (WHITE, BLACK, WHITE_LIBERTY, BLACK_LIBERTY or EMPTY).
+- For efficiency and not recomputing the state of the board every move, there are groups of stones, which reference intersections. In a group of stones we have a set of pieces and a set of liberties. Also, every intersection references a group of stones as well (may be null, if an intersection is not part of a group). When th groups become connected, they are merged. For further optimization, the groups merge by size(merge the smaller group to the bigger one). 
+
+### AI Integration
 
 ## Tasks
 ### Tema 0:
