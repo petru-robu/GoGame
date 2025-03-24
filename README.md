@@ -2,10 +2,8 @@
 An implementation of the Game of Go, done in C++ using the SFML library. The application simulates the go rules and applies them to the board. The game can be played locally by two players or against an AI integrated in the application.
 
 ## Compilation instructions
-Proiectul este configurat cu CMake.
-Instrucțiuni pentru terminal:
-
-0. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
+The project is configured via [Cmake](https://cmake.org/).
+0. Necessary libraries on linux (assuming debian installation)
 ```sh
 sudo apt-get update && \
   sudo apt-get install libxrandr-dev \
@@ -21,40 +19,29 @@ sudo apt-get update && \
     libfreetype6-dev
 ```
 
-Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
-
-1. Pasul de configurare
+1. Configuration
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 # sau ./scripts/cmake.sh configure
 ```
 
-Sau pe Windows cu GCC:
+On Windows with GCC:
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
 # sau ./scripts/cmake.sh configure -g Ninja
 ```
-La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
 
-2. Pasul de compilare
+2. Compilation
 ```sh
 cmake --build build --config Debug --parallel 6
-# sau ./scripts/cmake.sh build
+# or ./scripts/cmake.sh build
 ```
 
-Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
-
-3. Pasul de instalare (opțional)
+3. Instalation (optional)
 ```sh
 cmake --install build --config Debug --prefix install_dir
-# sau ./scripts/cmake.sh install
+# or ./scripts/cmake.sh install
 ```
-
-Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
-
-Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul `.gitignore` deoarece
-conțin fișiere generate și nu ne ajută să le versionăm.
-
 
 ## Tasks
 ### Tema 0:
