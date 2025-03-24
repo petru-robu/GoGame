@@ -2,7 +2,8 @@
 #define GAME_CONTEXT_H
 #include <SFML/Graphics.hpp>
 
-enum class GameState {
+enum class GameState 
+{
     MAIN_MENU,
     OPTIONS,
     GAMEPLAY,

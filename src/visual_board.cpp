@@ -87,7 +87,7 @@ Piece::~Piece()
 }
 
 VisualBoard::VisualBoard(sf::RenderWindow& window, GameContext& ctx): 
-IDrawable(window), ctx(ctx), bb(ctx)
+IDrawable(window), ctx(ctx), backend_board(ctx)
 {
     float board_size = 900;
     float cornerX = 500, cornerY = 10;
@@ -171,31 +171,43 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, int mouse_click_type)
             {
                 int cx = cell.getCoordX();
                 int cy = cell.getCoordY();
+
+                if(mouse_click_type == 0)
+                {
+                    backend_board.addStone(cx, cy, CellType::WHITE);
+                }
+                else if(mouse_click_type == 1)
+                {
+                    backend_board.addStone(cx, cy, CellType::BLACK);
+                }
                 
-                bb.addStone(cx, cy, mouse_click_type);
             }
         }       
     }
+
+    /*Print backend_board for debugging.*/
+    std::cout<<"The backend board is: \n"<<backend_board<<'\n';
 }
 
 void VisualBoard::process()
 {
-    std::vector<std::vector<int>> board_matrix = bb.getBoardMatrix();
+    std::vector<std::vector<CellType>> board_matrix = backend_board.getBoardMatrix();
     int gs = ctx.getGameSize();
 
     for(int i=0; i<gs; i++)
         for(int j=0; j<gs; j++)
         {
-            int val = board_matrix[i][j];
-            if(val != -1)
+            CellType cell_type = board_matrix[i][j];
+
+            if(cell_type != CellType::EMPTY)
             {
                 piece_grid[i][j].setPlaced(true);
 
-                if(val == 0)
+                if(cell_type == CellType::BLACK)
                 {
                     piece_grid[i][j].setColor(sf::Color::Black);
                 }
-                else if(val == 1)
+                else if(cell_type == CellType::WHITE)
                 {
                     piece_grid[i][j].setColor(sf::Color::White);
                 }

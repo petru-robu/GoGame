@@ -30,8 +30,8 @@ public:
     
     Game(const Game& game) = delete;
     Game& operator=(const Game& game) = delete;
-
     ~Game();
+    
     void Run();
 };
 

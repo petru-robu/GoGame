@@ -55,7 +55,7 @@ class VisualBoard: public IDrawable
 private:
     GameContext& ctx;
 
-    BackendBoard bb;
+    BackendBoard backend_board;
 
     sf::RectangleShape board_background;
     std::vector<sf::RectangleShape> grid_linesX;
