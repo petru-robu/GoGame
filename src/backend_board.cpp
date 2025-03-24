@@ -64,17 +64,6 @@ void Group::addStone(Intersection* inter)
     stones.insert(inter);
     inter->setGroup(this);
 }
-void Group::removeStone(Intersection* inter)
-{
-    if(stones.find(inter) != liberties.end())
-    {
-        stones.erase(inter);
-
-        inter->setGroup(nullptr);
-        inter->setType(CellType::EMPTY);
-    }
-        
-}
 
 void Group::addLiberty(Intersection* inter)
 {   
@@ -83,13 +72,9 @@ void Group::addLiberty(Intersection* inter)
 }
 void Group::removeLiberty(Intersection* inter)
 {
-    if(liberties.find(inter) != liberties.end())
-    {
-        liberties.erase(inter);
-
-        inter->setGroup(nullptr);
-        inter->setType(CellType::EMPTY);
-    }
+    liberties.erase(inter);
+    inter->setGroup(nullptr);
+    inter->setType(CellType::EMPTY);
 }
 
 void Group::free()
@@ -136,7 +121,7 @@ void BackendBoard::calculate_liberties(Group* group)
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     for(auto inter : group->get_stones())
     {  
-        for(auto &dir: directions)
+        for(auto const &dir: directions)
         {
             int new_cx = inter->getCoords().first + dir.first, new_cy = inter->getCoords().second + dir.second;
             if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
@@ -166,7 +151,7 @@ void BackendBoard::calculate_liberties(Intersection* inter)
     int gs = ctx.getGameSize();
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-    for(auto &dir: directions)
+    for(auto const &dir: directions)
     {
         int new_cx = inter->getCoords().first + dir.first, new_cy = inter->getCoords().second + dir.second;
         if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
@@ -196,7 +181,7 @@ void BackendBoard::merge_groups(Intersection* curr_stone)
     int gs = ctx.getGameSize();
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-    for(auto &dir: directions)
+    for(auto const &dir: directions)
     {
         int new_cx = curr_stone->getCoords().first + dir.first, new_cy = curr_stone->getCoords().second + dir.second;
         if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
@@ -252,15 +237,9 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
             capture = true;
             group_of_liberty->free();
 
-            if(white_groups.find(group_of_liberty) != white_groups.end())
-            {
-                white_groups.erase(group_of_liberty);
-            }
-               
-            if(black_groups.find(group_of_liberty) != black_groups.end())
-            {
-                black_groups.erase(group_of_liberty);
-            }
+            white_groups.erase(group_of_liberty);
+            black_groups.erase(group_of_liberty);
+            
             delete group_of_liberty;
         }
     }

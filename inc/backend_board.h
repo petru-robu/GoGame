@@ -70,7 +70,6 @@ public:
     std::set<Intersection*>& get_liberties();
 
     void addStone(Intersection* inter);
-    void removeStone(Intersection* inter);
     
     void addLiberty(Intersection* inter);
     void removeLiberty(Intersection* inter);

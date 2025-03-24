@@ -12,7 +12,7 @@ cell_size(cell_size), position(pos)
     }
     else
     {
-        drawable_cell.setSize({cell_size, cell_size});
+        drawable_cell.setSize({float(cell_size), float(cell_size)});
         drawable_cell.setPosition({position.x + cell_size/2, position.y + cell_size/2});
     }
 
@@ -94,11 +94,7 @@ Piece::~Piece()
 Liberty::Liberty(sf::RenderWindow& window, int coord_x, int coord_y, int cell_size, sf::Vector2f pos):
 Cell<sf::RectangleShape>(window, coord_x, coord_y, cell_size/2, pos)
 {
-}
-
-Liberty::~Liberty()
-{
-
+    placed = false;
 }
 
 void Liberty::setPlaced(bool p)
@@ -108,6 +104,11 @@ void Liberty::setPlaced(bool p)
 bool Liberty::isPlaced()
 {
     return placed;
+}
+
+Liberty::~Liberty()
+{
+
 }
 
 VisualBoard::VisualBoard(sf::RenderWindow& window, GameContext& ctx): 
