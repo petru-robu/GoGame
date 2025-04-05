@@ -30,7 +30,7 @@ public:
 
     void Render() override;
 
-    virtual ~Cell() = default;
+    virtual ~Cell() override = default ;
 };
 
 class Piece: public Cell<sf::CircleShape>
