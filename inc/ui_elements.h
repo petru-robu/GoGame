@@ -32,6 +32,7 @@ public:
 
     void setColor(sf::Color color);
     void setPosition(sf::Vector2f position);
+    void setString(std::string new_str);
 
     void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor);
 

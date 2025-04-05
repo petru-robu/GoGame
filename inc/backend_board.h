@@ -22,7 +22,8 @@ private:
 public:
     explicit BackendBoard(GameContext& ctx);
 
-    void addStone(int cx, int cy, CellType type);
+    bool addStone(int cx, int cy, CellType type);
+
     const std::vector<std::vector<Intersection>>& getBoardMatrix() const;
 
     ~BackendBoard();

@@ -98,7 +98,7 @@ void BackendBoard::capture(Group* captured_group)
         update_liberties(adj_group);
 }
 
-void BackendBoard::addStone(int cx, int cy, CellType cell_type)
+bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
 {
     Intersection* curr_inter = &board_matrix[cx][cy];
     CellType initial_type = curr_inter->getType();
@@ -106,7 +106,7 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
     if(initial_type == CellType::WHITE || initial_type == CellType::BLACK)
     {
         std::cout<<"Cannot place stone here! Space taken!";
-        return;
+        return false;
     }
     else if(initial_type == CellType::LIBERTY)
     {
@@ -124,7 +124,7 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
         }
         
         int enemy_capture_cnt = 0;
-        bool friendlyGroupAlive = false, hasFriendlyGroup = false;
+        bool friendlyGroupAlive = false, hasFriendlyGroup = false, hasEmptyNeighbour = false;
 
         //get the enemy groups from the groups that liberty pointed to
         std::set<Group*> enemy_groups;
@@ -143,28 +143,43 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
             {
                 hasFriendlyGroup = true;
 
-                if(referred_group->get_liberties().size() != 0)
+                auto referred_group_liberties = referred_group->get_liberties();
+                if(referred_group_liberties.size() != 0)
                     friendlyGroupAlive = true;
             }   
         }  
 
+        //check for empty neighbour
+        for(auto const &dir: directions)
+        {
+            int new_cx = cx + dir.first, new_cy = cy+ dir.second;
+            if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
+                continue;
+
+            Intersection* new_inter = &board_matrix[new_cx][new_cy];
+            if(new_inter->getType() == CellType::EMPTY || new_inter->getType() == CellType::LIBERTY)
+            {   
+                hasEmptyNeighbour = true;
+            }
+        }
+
         //do not allow suicide
-        if(hasFriendlyGroup && !friendlyGroupAlive && enemy_capture_cnt == 0)
+        if(hasFriendlyGroup && !friendlyGroupAlive && !hasEmptyNeighbour && enemy_capture_cnt == 0)
         {
             //This move is suicide (do not allow)
-            std::cout<<"Suicide!\n";
+            std::cout<<"1_Suicide!\n";
 
             //revert changes
             for(auto grp:groups_of_covered_liberty)
                 grp->addLiberty(curr_inter);
-            return;
+            return false;
         }
 
         //get the friendly adjacent groups
         std::set<Group*> to_merge_with;
         for(auto const &dir: directions)
         {
-            int new_cx = curr_inter->getCoords().first + dir.first, new_cy = curr_inter->getCoords().second + dir.second;
+            int new_cx = cx + dir.first, new_cy = cy+ dir.second;
             if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
                 continue;
 
@@ -209,13 +224,19 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
                     continue;
                 
                 Intersection* adj = &board_matrix[new_cx][new_cy];
-                eye_type = adj->getType();
+                if(eye_type != CellType::EMPTY && eye_type != adj->getType())
+                {
+                    eye_type = CellType::EMPTY;
+                    break;
+                }
+                else
+                    eye_type = adj->getType();
             }
 
-            if(eye_type != cell_type && enemy_capture_cnt == 0) 
+            if(eye_type != CellType::EMPTY && eye_type != cell_type && enemy_capture_cnt == 0) 
             {
                 //This move is suicide (do not allow)
-                std::cout<<"Suicide!\n";
+                std::cout<<"2_Suicide!\n";
 
                 //revert changes
                 curr_inter->setType(CellType::LIBERTY);
@@ -225,7 +246,7 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
                 for(auto grp:groups_of_covered_liberty)
                     grp->addLiberty(curr_inter);
 
-                return;
+                return false;
             }
         }
         
@@ -290,6 +311,43 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
             white_groups.insert(newGroup);
         }
     }
+    int idx = 1;
+
+    for(const auto &grp:white_groups)
+    {
+        std::cout<<"Group W"<<idx<<": ";
+
+        auto grp_stones = grp->get_stones();
+        for(auto inter : grp_stones)
+        {
+            std::cout<<'('<<inter->getCoords().second + 1<<',';
+            std::cout<<inter->getCoords().first + 1<<") ";
+        }
+
+        std::cout<<"Liberty count: "<<grp->get_liberties().size();
+        std::cout<<'\n';
+        idx++;
+
+    }
+
+    idx = 1;
+    for(auto &grp:black_groups)
+    {
+        std::cout<<"Group B"<<idx<<": ";
+
+        auto grp_stones = grp->get_stones();
+        for(auto inter : grp_stones)
+        {
+            std::cout<<'('<<inter->getCoords().second + 1<<',';
+            std::cout<<inter->getCoords().first + 1<<") ";
+        }
+        std::cout<<"Liberty count: "<<grp->get_liberties().size();
+        std::cout<<'\n';
+        idx++;
+    }
+
+
+    return true;
 }
 
 const std::vector<std::vector<Intersection>>& BackendBoard::getBoardMatrix() const

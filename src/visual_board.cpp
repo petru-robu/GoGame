@@ -176,6 +176,11 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
     }
 }
 
+BackendBoard& VisualBoard::getBackendBoard()
+{
+    return backend_board;
+}
+
 void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
 {
     float mx = mouse_pos.x;
@@ -198,7 +203,7 @@ void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
     }
 }
 
-void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, int mouse_click_type)
+void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
 {
     float mx = mouse_pos.x;
     float my = mouse_pos.y;
@@ -212,15 +217,19 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, int mouse_click_type)
                 int cx = cell.getCoordX();
                 int cy = cell.getCoordY();
 
-                if(mouse_click_type == 0)
+                bool move_state = backend_board.addStone(cx, cy, turn);
+                if(move_state == true)
                 {
-                    backend_board.addStone(cx, cy, CellType::WHITE);
+                    //next player turn
+                    if(turn == CellType::WHITE)
+                    {
+                        turn = CellType::BLACK;
+                    }   
+                    else if(turn == CellType::BLACK)
+                    {
+                        turn = CellType::WHITE;
+                    }
                 }
-                else if(mouse_click_type == 1)
-                {
-                    backend_board.addStone(cx, cy, CellType::BLACK);
-                }
-                
             }
         }       
     }

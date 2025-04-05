@@ -42,6 +42,11 @@ void Label::setPosition(sf::Vector2f pos)
     text.setPosition(position);
 }
 
+void Label::setString(std::string new_str)
+{
+    text.setString(new_str);
+}
+
 /* Getters */
 sf::Vector2f Label::getPosition()
 {   

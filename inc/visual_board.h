@@ -87,7 +87,9 @@ public:
 
     void process();
     void manageHovers(sf::Vector2i mouse_pos);
-    void manageMouseClick(sf::Vector2i mouse_pos, int mouse_click_type);
+    void manageMouseClick(sf::Vector2i mouse_pos, CellType& turn);
+
+    BackendBoard& getBackendBoard();
 
     void Render() override;
 
