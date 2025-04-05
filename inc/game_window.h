@@ -24,6 +24,10 @@ public:
     void EventHandler(const std::optional<sf::Event> &event) override;
     void Render() override;
     void Process() override;
+
+    GameWindow(const GameWindow& game) = delete;
+    GameWindow& operator=(const GameWindow& game) = delete;
+
     ~GameWindow() override;
 };
 

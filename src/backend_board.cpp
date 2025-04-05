@@ -311,40 +311,40 @@ bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
             white_groups.insert(newGroup);
         }
     }
-    int idx = 1;
+    // int idx = 1;
 
-    for(const auto &grp:white_groups)
-    {
-        std::cout<<"Group W"<<idx<<": ";
+    // for(const auto &grp:white_groups)
+    // {
+    //     std::cout<<"Group W"<<idx<<": ";
 
-        auto grp_stones = grp->get_stones();
-        for(auto inter : grp_stones)
-        {
-            std::cout<<'('<<inter->getCoords().second + 1<<',';
-            std::cout<<inter->getCoords().first + 1<<") ";
-        }
+    //     auto grp_stones = grp->get_stones();
+    //     for(auto inter : grp_stones)
+    //     {
+    //         std::cout<<'('<<inter->getCoords().second + 1<<',';
+    //         std::cout<<inter->getCoords().first + 1<<") ";
+    //     }
 
-        std::cout<<"Liberty count: "<<grp->get_liberties().size();
-        std::cout<<'\n';
-        idx++;
+    //     std::cout<<"Liberty count: "<<grp->get_liberties().size();
+    //     std::cout<<'\n';
+    //     idx++;
 
-    }
+    // }
 
-    idx = 1;
-    for(auto &grp:black_groups)
-    {
-        std::cout<<"Group B"<<idx<<": ";
+    // idx = 1;
+    // for(auto &grp:black_groups)
+    // {
+    //     std::cout<<"Group B"<<idx<<": ";
 
-        auto grp_stones = grp->get_stones();
-        for(auto inter : grp_stones)
-        {
-            std::cout<<'('<<inter->getCoords().second + 1<<',';
-            std::cout<<inter->getCoords().first + 1<<") ";
-        }
-        std::cout<<"Liberty count: "<<grp->get_liberties().size();
-        std::cout<<'\n';
-        idx++;
-    }
+    //     auto grp_stones = grp->get_stones();
+    //     for(auto inter : grp_stones)
+    //     {
+    //         std::cout<<'('<<inter->getCoords().second + 1<<',';
+    //         std::cout<<inter->getCoords().first + 1<<") ";
+    //     }
+    //     std::cout<<"Liberty count: "<<grp->get_liberties().size();
+    //     std::cout<<'\n';
+    //     idx++;
+    // }
 
 
     return true;
@@ -355,44 +355,6 @@ const std::vector<std::vector<Intersection>>& BackendBoard::getBoardMatrix() con
     return board_matrix;
 }
 
-// std::ostream& operator<<(std::ostream& os, const BackendBoard& backend_board)
-// {   
-//     int idx = 1;
-//     for(const auto &grp:backend_board.white_groups)
-//     {
-//         os<<"Group W"<<idx<<": ";
-
-//         auto grp_stones = grp->get_stones();
-//         for(auto inter : grp_stones)
-//         {
-//             os<<'('<<inter->getCoords().second + 1<<',';
-//             os<<inter->getCoords().first + 1<<") ";
-//         }
-
-//         os<<"Liberty count: "<<grp->get_liberties().size();
-//         os<<'\n';
-//         idx++;
-
-//     }
-
-//     idx = 1;
-//     for(auto &grp:backend_board.black_groups)
-//     {
-//         os<<"Group B"<<idx<<": ";
-
-//         auto grp_stones = grp->get_stones();
-//         for(auto inter : grp_stones)
-//         {
-//             os<<'('<<inter->getCoords().second + 1<<',';
-//             os<<inter->getCoords().first + 1<<") ";
-//         }
-//         os<<"Liberty count: "<<grp->get_liberties().size();
-//         os<<'\n';
-//         idx++;
-//     }
-
-//     return os;
-// }
 
 
 BackendBoard::~BackendBoard()

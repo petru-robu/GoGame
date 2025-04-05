@@ -17,11 +17,10 @@ void GameWindow::EventHandler(const std::optional<sf::Event> &event)
 {
     if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
     {
-        float mx = mouseButtonPressed->position.x;
-        float my = mouseButtonPressed->position.y;
-
         if (mouseButtonPressed->button == sf::Mouse::Button::Left)
         {
+            float mx = mouseButtonPressed->position.x;
+            float my = mouseButtonPressed->position.y;
             if(end_game_button.getBounds().contains({mx, my}))
             {
                 ctx.setState(GameState::MAIN_MENU);
