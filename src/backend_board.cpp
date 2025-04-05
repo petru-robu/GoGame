@@ -51,7 +51,8 @@ std::pair<int,int> Intersection::getCoords()
 
 /*Group*/
 
-Group::Group(){}
+Group::Group():group_type(CellType::EMPTY)
+{}
 
 const std::set<Intersection*>& Group::get_stones() const
 {
@@ -90,7 +91,7 @@ void Group::removeLiberty(Intersection* inter)
     inter->removeGroup(this);
 }
 
-void Group::extend(Group* to_append)
+void Group::extend(const Group* to_append)
 {
     auto to_append_stones = to_append->get_stones();
     auto to_append_liberties = to_append->get_liberties();
@@ -393,9 +394,6 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
             white_groups.insert(newGroup);
         }
     }
-
-    /*Print backend_board for debugging.*/
-    std::cout<<"The backend board is: \n"<<*this<<'\n';
 }
 
 const std::vector<std::vector<Intersection>>& BackendBoard::getBoardMatrix() const
@@ -403,44 +401,44 @@ const std::vector<std::vector<Intersection>>& BackendBoard::getBoardMatrix() con
     return board_matrix;
 }
 
-std::ostream& operator<<(std::ostream& os, BackendBoard& backend_board)
-{   
-    int idx = 1;
-    for(auto &grp:backend_board.white_groups)
-    {
-        os<<"Group W"<<idx<<": ";
+// std::ostream& operator<<(std::ostream& os, const BackendBoard& backend_board)
+// {   
+//     int idx = 1;
+//     for(const auto &grp:backend_board.white_groups)
+//     {
+//         os<<"Group W"<<idx<<": ";
 
-        auto grp_stones = grp->get_stones();
-        for(auto inter : grp_stones)
-        {
-            os<<'('<<inter->getCoords().second + 1<<',';
-            os<<inter->getCoords().first + 1<<") ";
-        }
+//         auto grp_stones = grp->get_stones();
+//         for(auto inter : grp_stones)
+//         {
+//             os<<'('<<inter->getCoords().second + 1<<',';
+//             os<<inter->getCoords().first + 1<<") ";
+//         }
 
-        os<<"Liberty count: "<<grp->get_liberties().size();
-        os<<'\n';
-        idx++;
+//         os<<"Liberty count: "<<grp->get_liberties().size();
+//         os<<'\n';
+//         idx++;
 
-    }
+//     }
 
-    idx = 1;
-    for(auto &grp:backend_board.black_groups)
-    {
-        os<<"Group B"<<idx<<": ";
+//     idx = 1;
+//     for(auto &grp:backend_board.black_groups)
+//     {
+//         os<<"Group B"<<idx<<": ";
 
-        auto grp_stones = grp->get_stones();
-        for(auto inter : grp_stones)
-        {
-            os<<'('<<inter->getCoords().second + 1<<',';
-            os<<inter->getCoords().first + 1<<") ";
-        }
-        os<<"Liberty count: "<<grp->get_liberties().size();
-        os<<'\n';
-        idx++;
-    }
+//         auto grp_stones = grp->get_stones();
+//         for(auto inter : grp_stones)
+//         {
+//             os<<'('<<inter->getCoords().second + 1<<',';
+//             os<<inter->getCoords().first + 1<<") ";
+//         }
+//         os<<"Liberty count: "<<grp->get_liberties().size();
+//         os<<'\n';
+//         idx++;
+//     }
 
-    return os;
-}
+//     return os;
+// }
 
 
 BackendBoard::~BackendBoard()

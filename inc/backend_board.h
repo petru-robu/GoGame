@@ -61,7 +61,7 @@ public:
     void setGroupType(CellType grp_type);
     CellType getGroupType();
 
-    void extend(Group* group);
+    void extend(const Group* group);
 };
 
 class BackendBoard
@@ -81,8 +81,6 @@ public:
 
     void addStone(int cx, int cy, CellType type);
     const std::vector<std::vector<Intersection>>& getBoardMatrix() const;
-    
-    friend std::ostream& operator<<(std::ostream& os, BackendBoard& backend_board);
 
     ~BackendBoard();
 
