@@ -90,21 +90,6 @@ void Group::removeLiberty(Intersection* inter)
     inter->removeGroup(this);
 }
 
-void Group::free()
-{
-    for(auto inter : stones)
-    {
-        inter->setType(CellType::EMPTY);
-        inter->removeGroup(this);
-    }
-
-    for(auto inter: liberties)
-    {
-        inter->setType(CellType::EMPTY);
-        inter->removeGroup(this);
-    }
-}
-
 void Group::extend(Group* to_append)
 {
     auto to_append_stones = to_append->get_stones();

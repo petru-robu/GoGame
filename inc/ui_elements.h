@@ -29,7 +29,6 @@ public:
 
     sf::Vector2f getPosition();
     sf::FloatRect getBounds();
-    sf::Text& getText();
 
     void setColor(sf::Color color);
     void setPosition(sf::Vector2f position);

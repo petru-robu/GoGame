@@ -53,11 +53,6 @@ sf::FloatRect Label::getBounds()
     return text.getGlobalBounds();
 }
 
-sf::Text& Label::getText()
-{
-    return text;
-}
-
 void Label::Render()
 {
     window.draw(text);

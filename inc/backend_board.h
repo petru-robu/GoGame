@@ -61,8 +61,6 @@ public:
     void setGroupType(CellType grp_type);
     CellType getGroupType();
 
-    void free();
-
     void extend(Group* group);
 };
 
