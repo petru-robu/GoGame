@@ -114,16 +114,15 @@ Liberty::~Liberty()
 VisualBoard::VisualBoard(sf::RenderWindow& window, GameContext& ctx): 
 IDrawable(window), ctx(ctx), backend_board(ctx)
 {
-    float board_size = 900;
-    float cornerX = 500, cornerY = 10;
+    float board_size = 800;
+    float cornerX = 570, cornerY = 90;
     int game_size = ctx.getGameSize();
     
     float cell_size = board_size / game_size;
 
     board_background.setFillColor(sf::Color(252, 144, 3));
-    board_background.setSize({board_size, board_size});
-    board_background.setPosition({cornerX, cornerY});
-
+    board_background.setSize({board_size+100, board_size+100});
+    board_background.setPosition({cornerX-50, cornerY-50});
 
     /*piece grid*/
     for(int i=0; i<game_size; i++)
@@ -172,8 +171,14 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
         grid_line_y.setSize({cell_size*(game_size-1), 2});
         grid_line_y.setPosition({cornerX, cornerY + (i)*cell_size});
         grid_linesY.push_back(grid_line_y);
-    }
 
+        intersection_numbers.push_back(new Label(window, std::to_string(game_size - i), 25, 
+        sf::Color::Black, "fonts/arial-bold.ttf", {cornerX - 45, cornerY + (i)*cell_size}));
+        
+        intersection_letters.push_back(new Label(window, std::string(1, 'A'+i), 25, 
+        sf::Color::Black, "fonts/arial-bold.ttf", {cornerX + (i)*cell_size, cornerY - 45}));
+
+    }
 }
 
 void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
@@ -253,17 +258,10 @@ void VisualBoard::process()
                 piece_grid[i][j].setPlaced(false);
             
 
-            if(cell_type == CellType::WHITE_LIBERTY || cell_type == CellType::BLACK_LIBERTY)
+            if(cell_type == CellType::LIBERTY)
             {
                 liberty_grid[i][j].setPlaced(true);
-                if(cell_type == CellType::BLACK_LIBERTY)
-                {
-                    liberty_grid[i][j].setColor(sf::Color::Black);
-                }
-                else if(cell_type == CellType::WHITE_LIBERTY)
-                {
-                    liberty_grid[i][j].setColor(sf::Color::White);
-                }
+                liberty_grid[i][j].setColor(sf::Color::Yellow);
             }
             else
                 liberty_grid[i][j].setPlaced(false);
@@ -275,12 +273,17 @@ void VisualBoard::Render()
 {
     window.draw(board_background);
 
+    for(auto &nmb:intersection_numbers)
+        nmb->Render();
+
+    for(auto &lett:intersection_letters)
+        lett->Render();
+
     for(auto &line:grid_linesX)
         window.draw(line);
     
     for(auto &line:grid_linesY)
         window.draw(line);
-
 
     for(auto &line:piece_grid)
     {
@@ -299,4 +302,10 @@ void VisualBoard::Render()
                 window.draw(liberty.getDrawableShape());
         }
     }
+}
+
+VisualBoard::~VisualBoard()
+{
+    for(auto label_ptr:intersection_numbers)
+        delete label_ptr;
 }

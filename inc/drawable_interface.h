@@ -11,6 +11,7 @@ protected:
 public:
     IDrawable(sf::RenderWindow& window): window(window){}
     virtual void Render() = 0;
+    virtual ~IDrawable() = default;
 };
 
 #endif

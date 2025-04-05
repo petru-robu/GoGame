@@ -7,30 +7,14 @@
 #include <queue>
 #include "game_context.h"
 
-// class BackendPiece
-// {
-//     private:
-//         GameContext& ctx;
-//         std::pair<int, int> coords;
-//         int type;
-    
-//     public:
-//         BackendPiece(GameContext& ctx, int cx, int cy, int type);
-
-//         friend bool operator<(const BackendPiece& p1, const BackendPiece& p2);
-//         friend bool operator==(const BackendPiece& p1, const BackendPiece& p2);
-//         friend bool operator!=(const BackendPiece& p1, const BackendPiece& p2);
-
-//         BackendPiece& operator=(const BackendPiece& bp);
-// };
 enum class CellType
 {
     WHITE,
     BLACK,
-    WHITE_LIBERTY,
-    BLACK_LIBERTY,
+    LIBERTY,
     EMPTY
 };
+
 std::ostream& operator<<(std::ostream& os, CellType& cell_type);
 
 class Group;
@@ -40,17 +24,17 @@ class Intersection
 private:
     std::pair<int, int> coords;
     CellType type;
-    Group* group;
+    std::set<Group*> groups;
 
 public:
     explicit Intersection(std::pair<int, int> coords, CellType type);
 
-
     void setType(CellType type);
     CellType getType();
 
-    void setGroup(Group* group);
-    Group* getGroup();
+    void addGroup(Group* group);
+    void removeGroup(Group* group);
+    std::set<Group*> getGroups();
 
     std::pair<int, int> getCoords();
 };  
@@ -58,6 +42,8 @@ public:
 class Group
 {
 private:
+    CellType group_type;
+
     std::set<Intersection*> stones;
     std::set<Intersection*> liberties;
 
@@ -71,6 +57,9 @@ public:
     
     void addLiberty(Intersection* inter);
     void removeLiberty(Intersection* inter);
+
+    void setGroupType(CellType grp_type);
+    CellType getGroupType();
 
     void free();
 
@@ -86,9 +75,8 @@ private:
     std::set<Group*> white_groups;
     std::set<Group*> black_groups;
 
-    void calculate_liberties(Group* group);
-    void calculate_liberties(Intersection* inter);
-    void merge_groups(Intersection* inter);
+    void update_liberties(Group* group);
+    void capture(Group* group);
 
 public:
     explicit BackendBoard(GameContext& ctx);

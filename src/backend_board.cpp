@@ -7,10 +7,8 @@ std::ostream& operator<<(std::ostream& os, CellType& cell_type)
         os<<"White";
     else if(cell_type == CellType::BLACK)
         os<<"Black";
-    else if(cell_type == CellType::WHITE_LIBERTY)
-        os<<"White Liberty";
-    else if(cell_type == CellType::BLACK_LIBERTY)
-        os<<"Black Liberty";
+    else if(cell_type == CellType::LIBERTY)
+        os<<"White/Black Liberty";
     else if(cell_type == CellType::EMPTY)
         os<<"Empty";
     return os;
@@ -20,7 +18,7 @@ std::ostream& operator<<(std::ostream& os, CellType& cell_type)
 Intersection::Intersection(std::pair<int, int> coords, CellType type): 
 coords(coords), type(type)
 {
-    group = nullptr;
+
 }
 
 /* setters and getters */
@@ -33,13 +31,17 @@ CellType Intersection::getType()
     return type;
 }
 
-void Intersection::setGroup(Group* g)
+void Intersection::addGroup(Group* g)
 {
-    group = g;
+    groups.insert(g);
 }
-Group* Intersection::getGroup()
+void Intersection::removeGroup(Group* g)
 {
-    return group;
+    groups.erase(g);
+}
+std::set<Group*> Intersection::getGroups()
+{
+    return groups;
 }
 
 std::pair<int,int> Intersection::getCoords()
@@ -59,22 +61,33 @@ std::set<Intersection*>& Group::get_liberties()
 {
     return liberties;
 }
+
+void Group::setGroupType(CellType grp_type)
+{
+    group_type = grp_type;
+}
+
+CellType Group::getGroupType()
+{
+    return group_type;
+}
+
+
 void Group::addStone(Intersection* inter)
 {
     stones.insert(inter);
-    inter->setGroup(this);
+    inter->addGroup(this);
 }
 
 void Group::addLiberty(Intersection* inter)
 {   
     liberties.insert(inter);
-    inter->setGroup(this);
+    inter->addGroup(this);
 }
 void Group::removeLiberty(Intersection* inter)
 {
     liberties.erase(inter);
-    inter->setGroup(nullptr);
-    inter->setType(CellType::EMPTY);
+    inter->removeGroup(this);
 }
 
 void Group::free()
@@ -82,7 +95,13 @@ void Group::free()
     for(auto inter : stones)
     {
         inter->setType(CellType::EMPTY);
-        inter->setGroup(nullptr);
+        inter->removeGroup(this);
+    }
+
+    for(auto inter: liberties)
+    {
+        inter->setType(CellType::EMPTY);
+        inter->removeGroup(this);
     }
 }
 
@@ -114,101 +133,81 @@ BackendBoard::BackendBoard(GameContext& ctx): ctx(ctx)
     }
 }
 
-void BackendBoard::calculate_liberties(Group* group)
+void BackendBoard::update_liberties(Group* group)
 {
     int gs = ctx.getGameSize();
-
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
     for(auto inter : group->get_stones())
     {  
         for(auto const &dir: directions)
         {
-            int new_cx = inter->getCoords().first + dir.first, new_cy = inter->getCoords().second + dir.second;
+            int new_cx = inter->getCoords().first + dir.first;
+            int new_cy = inter->getCoords().second + dir.second;
+
             if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
                 continue;
 
-            Intersection* new_inter = &board_matrix[new_cx][new_cy];
+            Intersection* neighbour_inter = &board_matrix[new_cx][new_cy];
 
-            if(new_inter->getType() == CellType::EMPTY)
+            if(neighbour_inter->getType() == CellType::EMPTY || neighbour_inter->getType() == CellType::LIBERTY)
             {
-                if(inter->getType() == CellType::WHITE)
-                {
-                    new_inter->setType(CellType::WHITE_LIBERTY);
-                }   
-                else if(inter->getType() == CellType::BLACK)
-                {
-                    new_inter->setType(CellType::BLACK_LIBERTY);
-                }
-
-                group->addLiberty(new_inter);
+                // the neighbour is unocupied, it becomes liberty
+                neighbour_inter->setType(CellType::LIBERTY);
+                group->addLiberty(neighbour_inter);
             }
         }   
     }
 }
 
-void BackendBoard::calculate_liberties(Intersection* inter)
+void BackendBoard::capture(Group* captured_group)
 {
+    std::cout<<"Captured stone size: "<<captured_group->get_stones().size()<<"and liberties size: "<<captured_group->get_liberties().size()<<'\n';
+
     int gs = ctx.getGameSize();
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-    for(auto const &dir: directions)
+    std::set<Group*> adj_groups_to_captured;
+    for(auto stone:captured_group->get_stones())
     {
-        int new_cx = inter->getCoords().first + dir.first, new_cy = inter->getCoords().second + dir.second;
-        if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
-            continue;
-
-        Intersection* new_inter = &board_matrix[new_cx][new_cy];
-
-        if(new_inter->getType() == CellType::EMPTY)
+        // get all the adj groups to the captured stones
+        for(auto const &dir: directions)
         {
-            if(inter->getType() == CellType::WHITE)
+            int new_cx = stone->getCoords().first + dir.first, new_cy = stone->getCoords().second + dir.second;
+            if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
+                continue;
+
+            Intersection* new_inter = &board_matrix[new_cx][new_cy];
+            
+            if((new_inter->getType() == CellType::WHITE && captured_group->getGroupType() == CellType::BLACK) ||
+            (new_inter->getType() == CellType::BLACK && captured_group->getGroupType() == CellType::WHITE))
             {
-                new_inter->setType(CellType::WHITE_LIBERTY);
-            }   
-            else if(inter->getType() == CellType::BLACK)
-            {
-                new_inter->setType(CellType::BLACK_LIBERTY);
+                for(auto grp: new_inter->getGroups())
+                {
+                    adj_groups_to_captured.insert(grp);
+                }
             }
-
-            Group* group = inter->getGroup();
-            group->addLiberty(new_inter);
         }
-    } 
-}
-
-void BackendBoard::merge_groups(Intersection* curr_stone)
-{
-    int gs = ctx.getGameSize();
-    std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-
-    for(auto const &dir: directions)
+    }   
+    std::cout<<adj_groups_to_captured.size()<<" no. of adj groups found!\n";
+    
+    for(auto captured_inter:captured_group->get_stones())
     {
-        int new_cx = curr_stone->getCoords().first + dir.first, new_cy = curr_stone->getCoords().second + dir.second;
-        if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
-            continue;
+        //remove the stones of the board
+        captured_inter->setType(CellType::EMPTY);
 
-        Intersection* new_inter = &board_matrix[new_cx][new_cy];
-
-        if((new_inter->getType() == CellType::BLACK || new_inter->getType() == CellType::WHITE)
-            && new_inter->getType() == curr_stone->getType())
-        {
-            CellType type = new_inter->getType();
-            Group* curr_group = curr_stone->getGroup();
-            Group* new_group = new_inter->getGroup();
-
-            if(curr_group != new_group)
-            {
-                curr_group->extend(new_group);
-            
-                if(type == CellType::BLACK)
-                    black_groups.erase(new_group);
-                else
-                    white_groups.erase(new_group);
-                delete new_group;
-            }
-            
-        }
+        for(auto grp:captured_inter->getGroups())
+            captured_inter->removeGroup(grp);
     }
+
+    black_groups.erase(captured_group);
+    white_groups.erase(captured_group);
+        
+    delete captured_group;
+    
+    //for every adj group, recalculate the liberties
+    for(auto adj_group: adj_groups_to_captured)
+        update_liberties(adj_group);
 }
 
 void BackendBoard::addStone(int cx, int cy, CellType cell_type)
@@ -221,45 +220,185 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
         std::cout<<"Cannot place stone here! Space taken!";
         return;
     }
-
-    bool capture = false;
-
-    if(initial_type == CellType::WHITE_LIBERTY || initial_type == CellType::BLACK_LIBERTY)
+    else if(initial_type == CellType::LIBERTY)
     {
         //we are placing on liberty
-        Group* group_of_liberty = curr_inter->getGroup();
-        group_of_liberty->removeLiberty(curr_inter);
+        int gs = ctx.getGameSize();
+        std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-        //std::cout<<"Placing on "<<initial_type<<' '<<group_of_liberty->get_liberties().size()<<'\n';
+        std::set<Group*> groups_of_covered_liberty = curr_inter->getGroups();    
 
-        if(group_of_liberty->get_liberties().size() == 0)
-        {   
-            capture = true;
-            group_of_liberty->free();
+        //remove the liberty that is covered from the rest of the groups
+        for(auto grp:groups_of_covered_liberty)
+        {
+            curr_inter->removeGroup(grp);
+            grp->removeLiberty(curr_inter);
+        }
+        
+        int enemy_capture_cnt = 0;
+        bool friendlyGroupAlive = false, hasFriendlyGroup = false;
 
-            white_groups.erase(group_of_liberty);
-            black_groups.erase(group_of_liberty);
-            
-            delete group_of_liberty;
+        //get the enemy groups from the groups that liberty pointed to
+        std::set<Group*> enemy_groups;
+        for(auto referred_group:groups_of_covered_liberty)
+        {
+            CellType type_of_referred_group = referred_group->getGroupType();
+            if((type_of_referred_group == CellType::WHITE && cell_type == CellType::BLACK)||
+                (type_of_referred_group == CellType::BLACK && cell_type == CellType::WHITE))
+            {
+                enemy_groups.insert(referred_group);
+                if(referred_group->get_liberties().size() == 0)
+                    enemy_capture_cnt += 1;
+            }
+            if((type_of_referred_group == CellType::WHITE && cell_type == CellType::WHITE)||
+                (type_of_referred_group == CellType::BLACK && cell_type == CellType::BLACK))
+            {
+                hasFriendlyGroup = true;
+
+                if(referred_group->get_liberties().size() != 0)
+                    friendlyGroupAlive = true;
+            }   
+        }  
+
+        //do not allow suicide
+        if(hasFriendlyGroup && !friendlyGroupAlive && enemy_capture_cnt == 0)
+        {
+            //This move is suicide (do not allow)
+            std::cout<<"Suicide!\n";
+
+            //revert changes
+            for(auto grp:groups_of_covered_liberty)
+                grp->addLiberty(curr_inter);
+            return;
+        }
+
+        //get the friendly adjacent groups
+        std::set<Group*> to_merge_with;
+        for(auto const &dir: directions)
+        {
+            int new_cx = curr_inter->getCoords().first + dir.first, new_cy = curr_inter->getCoords().second + dir.second;
+            if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
+                continue;
+
+            Intersection* new_inter = &board_matrix[new_cx][new_cy];
+            if(new_inter->getType() == cell_type)
+            {       
+                for(auto grp:new_inter->getGroups())
+                    to_merge_with.insert(grp);
+            }
+        }
+        
+        //create the new group
+        Group* newGroup = new Group();
+        newGroup->addStone(curr_inter);
+        newGroup->setGroupType(cell_type);
+        curr_inter->setType(cell_type);
+
+        if(cell_type == CellType::BLACK)
+        {
+            black_groups.insert(newGroup);
+        }   
+        else if(cell_type == CellType::WHITE)
+        {
+            white_groups.insert(newGroup);
+        }
+        update_liberties(newGroup);
+
+        //check if move is suicide
+        if(newGroup->get_liberties().size() == 0)
+        {
+            int cx = curr_inter->getCoords().first;
+            int cy = curr_inter->getCoords().second;
+            CellType eye_type;
+
+            //if there is 0 out of maximum 4 liberties, stone is in an eye
+            //get the eye's type
+            for(auto dir:directions)
+            {
+                int new_cx = cx + dir.first;
+                int new_cy = cy + dir.second;
+
+                if(new_cx < 0 || new_cy < 0 || new_cx >= gs || new_cy >= gs)
+                    continue;
+                
+                Intersection* adj = &board_matrix[new_cx][new_cy];
+                eye_type = adj->getType();
+            }
+
+            if(eye_type != cell_type && enemy_capture_cnt == 0) 
+            {
+                //This move is suicide (do not allow)
+                std::cout<<"Suicide!\n";
+
+                //revert changes
+                curr_inter->setType(CellType::LIBERTY);
+                black_groups.erase(newGroup);
+                white_groups.erase(newGroup);
+                delete newGroup;
+                for(auto grp:groups_of_covered_liberty)
+                    grp->addLiberty(curr_inter);
+
+                return;
+            }
+        }
+        
+        //managing of merges
+        if(!to_merge_with.empty())
+        {
+            std::cout<<"Merging with "<<to_merge_with.size()<<" groups!\n";
+
+            for(auto group_to_merge:to_merge_with)
+            {   
+                newGroup->extend(group_to_merge);
+
+                for(auto liberty:group_to_merge->get_liberties())
+                {
+                    liberty->removeGroup(group_to_merge);
+                }
+                for(auto stone:group_to_merge->get_stones())
+                {
+                    stone->removeGroup(group_to_merge);
+                }
+
+                if(cell_type == CellType::BLACK)
+                {
+                    black_groups.erase(group_to_merge);
+                }
+                else if(cell_type == CellType::WHITE)
+                {
+                    white_groups.erase(group_to_merge);
+                }
+                delete group_to_merge;
+            }
+        }
+
+        //managing of captures
+        for(auto enemy:enemy_groups)
+        {
+            if(enemy->get_liberties().size() == 0)
+            {
+                capture(enemy);
+            }
         }
     }
-
-    curr_inter->setType(cell_type);
-    Group* newGroup = new Group();
-    newGroup->addStone(curr_inter);
-
-    if(cell_type == CellType::BLACK)
-        black_groups.insert(newGroup);
-
-    if(cell_type == CellType::WHITE)
-        white_groups.insert(newGroup);
-
-    calculate_liberties(curr_inter);
-    merge_groups(curr_inter);
-
-    if(capture)
+    else if(initial_type == CellType::EMPTY)
     {
-        calculate_liberties(curr_inter->getGroup());
+        curr_inter->setType(cell_type);
+
+        Group* newGroup = new Group();
+        newGroup->setGroupType(cell_type);
+        newGroup->addStone(curr_inter);
+
+        update_liberties(newGroup);
+
+        if(cell_type == CellType::BLACK)
+        {
+            black_groups.insert(newGroup);
+        }
+        else if(cell_type == CellType::WHITE)
+        {
+            white_groups.insert(newGroup);
+        }
     }
 
     /*Print backend_board for debugging.*/
@@ -280,11 +419,14 @@ std::ostream& operator<<(std::ostream& os, BackendBoard& backend_board)
 
         for(auto inter : grp->get_stones())
         {
-            os<<'('<<inter->getCoords().first<<',';
-            os<<inter->getCoords().second<<") ";
+            os<<'('<<inter->getCoords().second + 1<<',';
+            os<<inter->getCoords().first + 1<<") ";
         }
+
+        os<<"Liberty count: "<<grp->get_liberties().size();
         os<<'\n';
         idx++;
+
     }
 
     idx = 1;
@@ -294,34 +436,17 @@ std::ostream& operator<<(std::ostream& os, BackendBoard& backend_board)
 
         for(auto inter : grp->get_stones())
         {
-            os<<'('<<inter->getCoords().first<<',';
-            os<<inter->getCoords().second<<") ";
+            os<<'('<<inter->getCoords().second + 1<<',';
+            os<<inter->getCoords().first + 1<<") ";
         }
+        os<<"Liberty count: "<<grp->get_liberties().size();
         os<<'\n';
         idx++;
     }
 
-
-    int game_size = backend_board.ctx.getGameSize();
-    std::vector<std::vector<Intersection>> board_matrix = backend_board.getBoardMatrix();
-    for(int i=0; i<game_size; i++)
-    {
-        for(int j=0; j<game_size; j++)
-        {
-            if(board_matrix[i][j].getType() == CellType::WHITE)
-                os<<"W";
-            else if(board_matrix[i][j].getType() == CellType::BLACK)
-                os<<"B";
-            else
-                os<<"_";
-        }
-        os<<"\n";
-    }
-
     return os;
-
-
 }
+
 
 BackendBoard::~BackendBoard()
 {   

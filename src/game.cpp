@@ -1,6 +1,6 @@
 #include "../inc/game.h"
 
-Game::Game(): ctx(13)
+Game::Game(): ctx(19)
 {
     unsigned int window_width = 1920;
     unsigned int window_height = 1080;

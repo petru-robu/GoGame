@@ -29,6 +29,7 @@ public:
 
     sf::Vector2f getPosition();
     sf::FloatRect getBounds();
+    sf::Text& getText();
 
     void setColor(sf::Color color);
     void setPosition(sf::Vector2f position);
@@ -36,6 +37,8 @@ public:
     void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor);
 
     void Render() override;
+
+    ~Label() = default;
 };
 
 

@@ -6,6 +6,7 @@
 #include "game_context.h"
 #include "drawable_interface.h"
 #include "backend_board.h"
+#include "ui_elements.h"
 
 template <typename DT>
 class Cell : public IDrawable
@@ -71,11 +72,15 @@ private:
     BackendBoard backend_board;
 
     sf::RectangleShape board_background;
+
     std::vector<sf::RectangleShape> grid_linesX;
     std::vector<sf::RectangleShape> grid_linesY;
 
     std::vector<std::vector<Piece>> piece_grid;
     std::vector<std::vector<Liberty>> liberty_grid;
+
+    std::vector<Label*> intersection_numbers;
+    std::vector<Label*> intersection_letters;
 
 public:
     VisualBoard(sf::RenderWindow& window, GameContext &ctx);
@@ -85,6 +90,8 @@ public:
     void manageMouseClick(sf::Vector2i mouse_pos, int mouse_click_type);
 
     void Render() override;
+
+    ~VisualBoard();
 
 };
 #endif
