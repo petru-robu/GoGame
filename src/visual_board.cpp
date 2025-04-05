@@ -176,11 +176,6 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
     }
 }
 
-BackendBoard& VisualBoard::getBackendBoard()
-{
-    return backend_board;
-}
-
 void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
 {
     float mx = mouse_pos.x;
