@@ -34,7 +34,7 @@ public:
 
     void addGroup(Group* group);
     void removeGroup(Group* group);
-    std::set<Group*> getGroups();
+    const std::set<Group*>& getGroups() const;
 
     std::pair<int, int> getCoords();
 };  
@@ -50,8 +50,8 @@ private:
 public:
     Group();
 
-    std::set<Intersection*>& get_stones();
-    std::set<Intersection*>& get_liberties();
+    const std::set<Intersection*>& get_stones() const;
+    const std::set<Intersection*>& get_liberties() const;
 
     void addStone(Intersection* inter);
     
@@ -80,7 +80,7 @@ public:
     explicit BackendBoard(GameContext& ctx);
 
     void addStone(int cx, int cy, CellType type);
-    const std::vector<std::vector<Intersection>>& getBoardMatrix();
+    const std::vector<std::vector<Intersection>>& getBoardMatrix() const;
     
     friend std::ostream& operator<<(std::ostream& os, BackendBoard& backend_board);
 

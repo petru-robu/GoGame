@@ -37,7 +37,7 @@ public:
 
     void Render() override;
 
-    ~Label() = default;
+    ~Label() override = default;
 };
 
 

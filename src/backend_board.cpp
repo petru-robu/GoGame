@@ -39,7 +39,7 @@ void Intersection::removeGroup(Group* g)
 {
     groups.erase(g);
 }
-std::set<Group*> Intersection::getGroups()
+const std::set<Group*>& Intersection::getGroups() const
 {
     return groups;
 }
@@ -53,11 +53,11 @@ std::pair<int,int> Intersection::getCoords()
 
 Group::Group(){}
 
-std::set<Intersection*>& Group::get_stones()
+const std::set<Intersection*>& Group::get_stones() const
 {
     return stones;
 }
-std::set<Intersection*>& Group::get_liberties()
+const std::set<Intersection*>& Group::get_liberties() const
 {
     return liberties;
 }
@@ -123,7 +123,8 @@ void BackendBoard::update_liberties(Group* group)
     int gs = ctx.getGameSize();
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-    for(auto inter : group->get_stones())
+    auto group_stones = group->get_stones();
+    for(auto inter : group_stones)
     {  
         for(auto const &dir: directions)
         {
@@ -153,7 +154,9 @@ void BackendBoard::capture(Group* captured_group)
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     std::set<Group*> adj_groups_to_captured;
-    for(auto stone:captured_group->get_stones())
+
+    auto captured_group_stones = captured_group->get_stones();
+    for(auto stone:captured_group_stones)
     {
         // get all the adj groups to the captured stones
         for(auto const &dir: directions)
@@ -167,7 +170,8 @@ void BackendBoard::capture(Group* captured_group)
             if((new_inter->getType() == CellType::WHITE && captured_group->getGroupType() == CellType::BLACK) ||
             (new_inter->getType() == CellType::BLACK && captured_group->getGroupType() == CellType::WHITE))
             {
-                for(auto grp: new_inter->getGroups())
+                auto new_inter_groups = new_inter->getGroups();
+                for(auto grp: new_inter_groups)
                 {
                     adj_groups_to_captured.insert(grp);
                 }
@@ -176,12 +180,14 @@ void BackendBoard::capture(Group* captured_group)
     }   
     std::cout<<adj_groups_to_captured.size()<<" no. of adj groups found!\n";
     
-    for(auto captured_inter:captured_group->get_stones())
+    captured_group_stones = captured_group->get_stones();
+    for(auto captured_inter:captured_group_stones)
     {
         //remove the stones of the board
         captured_inter->setType(CellType::EMPTY);
 
-        for(auto grp:captured_inter->getGroups())
+        auto captured_inter_groups = captured_inter->getGroups();
+        for(auto grp:captured_inter_groups)
             captured_inter->removeGroup(grp);
     }
 
@@ -211,7 +217,7 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
         int gs = ctx.getGameSize();
         std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-        std::set<Group*> groups_of_covered_liberty = curr_inter->getGroups();    
+        auto groups_of_covered_liberty = curr_inter->getGroups();    
 
         //remove the liberty that is covered from the rest of the groups
         for(auto grp:groups_of_covered_liberty)
@@ -267,8 +273,9 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
 
             Intersection* new_inter = &board_matrix[new_cx][new_cy];
             if(new_inter->getType() == cell_type)
-            {       
-                for(auto grp:new_inter->getGroups())
+            {   
+                auto inter_groups = new_inter->getGroups();
+                for(auto grp:inter_groups)
                     to_merge_with.insert(grp);
             }
         }
@@ -292,8 +299,6 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
         //check if move is suicide
         if(newGroup->get_liberties().size() == 0)
         {
-            int cx = curr_inter->getCoords().first;
-            int cy = curr_inter->getCoords().second;
             CellType eye_type;
 
             //if there is 0 out of maximum 4 liberties, stone is in an eye
@@ -336,11 +341,14 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
             {   
                 newGroup->extend(group_to_merge);
 
-                for(auto liberty:group_to_merge->get_liberties())
+                auto group_to_merge_liberties = group_to_merge->get_liberties();
+                for(auto liberty:group_to_merge_liberties)
                 {
                     liberty->removeGroup(group_to_merge);
                 }
-                for(auto stone:group_to_merge->get_stones())
+
+                auto group_to_merge_stones = group_to_merge->get_stones();
+                for(auto stone:group_to_merge_stones)
                 {
                     stone->removeGroup(group_to_merge);
                 }
@@ -390,7 +398,7 @@ void BackendBoard::addStone(int cx, int cy, CellType cell_type)
     std::cout<<"The backend board is: \n"<<*this<<'\n';
 }
 
-const std::vector<std::vector<Intersection>>& BackendBoard::getBoardMatrix()
+const std::vector<std::vector<Intersection>>& BackendBoard::getBoardMatrix() const
 {
     return board_matrix;
 }
@@ -402,7 +410,8 @@ std::ostream& operator<<(std::ostream& os, BackendBoard& backend_board)
     {
         os<<"Group W"<<idx<<": ";
 
-        for(auto inter : grp->get_stones())
+        auto grp_stones = grp->get_stones();
+        for(auto inter : grp_stones)
         {
             os<<'('<<inter->getCoords().second + 1<<',';
             os<<inter->getCoords().first + 1<<") ";
@@ -419,7 +428,8 @@ std::ostream& operator<<(std::ostream& os, BackendBoard& backend_board)
     {
         os<<"Group B"<<idx<<": ";
 
-        for(auto inter : grp->get_stones())
+        auto grp_stones = grp->get_stones();
+        for(auto inter : grp_stones)
         {
             os<<'('<<inter->getCoords().second + 1<<',';
             os<<inter->getCoords().first + 1<<") ";

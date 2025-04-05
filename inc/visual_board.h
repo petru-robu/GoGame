@@ -91,7 +91,7 @@ public:
 
     void Render() override;
 
-    ~VisualBoard();
+    ~VisualBoard() override;
 
 };
 #endif
