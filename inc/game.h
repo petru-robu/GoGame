@@ -19,11 +19,13 @@ private:
     IMenu* menu;
     OptionsMenu* options_menu;
     MainMenu* main_menu;
-    GameWindow* game_window;
+    SelectorMenu* selector_menu;
 
+    LocalGameWindow* local_game_window;
+    AIGameWindow* ai_game_window;
+    
     void Init();
     void changeState();
-    
 
 public:
     Game();

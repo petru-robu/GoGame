@@ -4,8 +4,9 @@
 #include "ui_elements.h"
 #include "visual_board.h"
 #include "menu_interface.h"
+#include "color_constants.h"
 
-class GameWindow : public IMenu
+class LocalGameWindow : public IMenu
 {
 private:
     VisualBoard* visual_board;
@@ -14,21 +15,48 @@ private:
     Label title;
     Label end_game_button;
     Label clear_board_button;
-    Label back_to_menu;
 
     Label to_play;
     Label game_type_label;
+
+    sf::Sprite backgroundSprite;
     
 public:
-    GameWindow(sf::RenderWindow &window, GameContext &ctx);
+    LocalGameWindow(sf::RenderWindow &window, GameContext &ctx);
     void EventHandler(const std::optional<sf::Event> &event) override;
     void Render() override;
     void Process() override;
 
-    GameWindow(const GameWindow& game) = delete;
-    GameWindow& operator=(const GameWindow& game) = delete;
+    LocalGameWindow(const LocalGameWindow& game) = delete;
+    LocalGameWindow& operator=(const LocalGameWindow& game) = delete;
 
-    ~GameWindow() override;
+    ~LocalGameWindow() override;
+};
+
+class AIGameWindow : public IMenu
+{
+private:
+    VisualBoard* visual_board;
+    CellType turn;
+
+    Label title;
+    Label end_game_button;
+    Label clear_board_button;
+    
+    Label game_type_label;
+
+    sf::Sprite backgroundSprite;
+    
+public:
+    AIGameWindow(sf::RenderWindow &window, GameContext &ctx);
+    void EventHandler(const std::optional<sf::Event> &event) override;
+    void Render() override;
+    void Process() override;
+
+    AIGameWindow(const AIGameWindow& game) = delete;
+    AIGameWindow& operator=(const AIGameWindow& game) = delete;
+
+    ~AIGameWindow() override;
 };
 
 #endif

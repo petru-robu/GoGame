@@ -7,6 +7,7 @@
 #include "game_context.h"
 #include "menu_interface.h"
 #include "drawable_interface.h"
+#include "resource_manager.h"
 
 class Label: public IDrawable
 {
@@ -41,6 +42,30 @@ public:
     ~Label() override = default;
 };
 
+class LabelBox: public Label
+{
+protected:
+    bool borders;
+    sf::RectangleShape border;
+
+public:
+    LabelBox(sf::RenderWindow& window, std::string str, float ch_size, sf::Color color, 
+    std::string font_path, sf::Vector2f position, bool borders);
+
+    sf::FloatRect getBounds();
+    bool hasBorders();
+
+    void setColor(sf::Color color);
+    void setPosition(sf::Vector2f position);
+    void setString(std::string new_str);
+    void setBorders(bool borders);
+
+    void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor);
+
+    void Render() override;
+
+    ~LabelBox() override = default;
+};
 
 
 #endif

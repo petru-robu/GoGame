@@ -18,11 +18,12 @@ void Label::calculatePosition()
 
 void Label::loadProprieties()
 {
-    if(!font.openFromFile(font_path))
-        std::cerr<<"Cannot open font!";
+    auto font = ResourceManager::getInstance().getFont(font_path);
     
+    if(font != nullptr)
+        text.setFont(*font);
+
     text.setString(str);
-    text.setFont(font);
     text.setCharacterSize(ch_size);
     text.setFillColor(color);
 
@@ -68,7 +69,94 @@ void Label::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
     float mx = mouse_pos.x;
     float my = mouse_pos.y;
 
-    setColor(sf::Color::White);
+    text.setFillColor(color);
     if(getBounds().contains({mx, my}))
-        setColor(hoverColor);
+        text.setFillColor(hoverColor);
+}
+
+LabelBox::LabelBox(sf::RenderWindow& window, std::string str, float ch_size, sf::Color color, 
+std::string font_path, sf::Vector2f position, bool borders): 
+Label(window, str, ch_size, color, font_path, position), 
+borders(borders)
+{
+    auto text_bounds = text.getGlobalBounds();
+    border.setSize({text_bounds.size.x + 10, text_bounds.size.y + 10});
+    border.setOrigin({border.getSize().x/2, border.getSize().y/2});
+    border.setPosition(position);
+
+    border.setOutlineColor(color);
+    border.setFillColor(sf::Color(255, 255, 255, 0));
+    border.setOutlineThickness(3.f);
+}
+
+sf::FloatRect LabelBox::getBounds()
+{
+    if(borders)
+        return border.getGlobalBounds();
+    else
+        return text.getGlobalBounds();
+}
+bool LabelBox::hasBorders()
+{
+    return borders;
+}
+
+void LabelBox::setColor(sf::Color color)
+{
+    Label::setColor(color);
+    border.setOutlineColor(color);
+}
+
+void LabelBox::setPosition(sf::Vector2f position)
+{
+    Label::setPosition(position);
+    border.setPosition(position);
+}   
+
+void LabelBox::setString(std::string new_str)
+{
+    Label::setString(new_str);
+    auto text_bounds = text.getGlobalBounds();
+    border.setSize({text_bounds.size.x + 10, text_bounds.size.y + 10});
+    border.setOrigin({border.getSize().x/2, border.getSize().y/2});
+    border.setPosition(position);
+}
+
+void LabelBox::setBorders(bool borders)
+{
+    this->borders = borders;
+}
+
+void LabelBox::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
+{
+    float mx = mouse_pos.x;
+    float my = mouse_pos.y;
+
+    text.setFillColor(color);
+    border.setOutlineColor(color);
+
+    if(borders)
+    {
+        if(border.getGlobalBounds().contains({mx, my}))
+        {
+            text.setFillColor(hoverColor);
+            border.setOutlineColor(hoverColor);
+        }
+    }
+    else
+    {
+        if(text.getGlobalBounds().contains({mx, my}))
+        {
+            text.setFillColor(hoverColor);
+            border.setOutlineColor(hoverColor);
+        }
+    }   
+}
+
+void LabelBox::Render()
+{
+    window.draw(text);
+
+    if(borders)
+        window.draw(border);
 }

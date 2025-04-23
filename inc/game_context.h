@@ -5,9 +5,17 @@
 enum class GameState 
 {
     MAIN_MENU,
+    SELECTOR_MENU,
     OPTIONS,
-    GAMEPLAY,
+    LOCAL_GAMEPLAY,
+    AI_GAMEPLAY,
     UNDEFINED
+};
+
+enum class GameType
+{
+    LOCAL,
+    AI
 };
 
 class GameContext
@@ -15,13 +23,17 @@ class GameContext
 private:
     GameState state;
     GameState prev_state;
+
     int game_size;
+    GameType game_type;
     
 public:
     explicit GameContext(int gs);
 
     void setState(GameState ns);
     void setPrevState(GameState ps);
+    void setGameSize(int gs);
+    void setGameType(GameType gt);
 
     GameState getState();
     GameState getPrevState();

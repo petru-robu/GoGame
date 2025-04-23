@@ -7,6 +7,7 @@
 #include "drawable_interface.h"
 #include "backend_board.h"
 #include "ui_elements.h"
+#include "color_constants.h"
 
 template <typename DT>
 class Cell : public IDrawable

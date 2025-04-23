@@ -15,6 +15,14 @@ void GameContext::setPrevState(GameState ps)
 {
     prev_state = ps;
 }
+void GameContext::setGameSize(int gs)
+{
+    game_size = gs;
+}
+void GameContext::setGameType(GameType gt)
+{
+    game_type = gt;
+}
 
 //getters
 GameState GameContext::getState()

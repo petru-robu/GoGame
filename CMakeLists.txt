@@ -66,6 +66,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     ./src/ui_elements.cpp
     ./src/visual_board.cpp
     ./src/group.cpp
+    ./src/resource_manager.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

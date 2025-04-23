@@ -1,6 +1,6 @@
 #include "../inc/game.h"
 
-Game::Game(): ctx(13)
+Game::Game(): ctx(9)
 {
     unsigned int window_width = 1920;
     unsigned int window_height = 1080;
@@ -10,7 +10,7 @@ Game::Game(): ctx(13)
 
     options_menu = new OptionsMenu(window, ctx);
     main_menu = new MainMenu(window, ctx);
-    game_window = new GameWindow(window, ctx);
+    selector_menu = new SelectorMenu(window, ctx);
 
     menu = main_menu;
 }
@@ -35,12 +35,26 @@ void Game::changeState()
         menu = options_menu;
         ctx.setPrevState(ctx.getState());
     }
-    else if(ctx.getState() == GameState::GAMEPLAY && 
+    else if(ctx.getState() == GameState::SELECTOR_MENU &&
     ctx.getState()  != ctx.getPrevState())
     {
-        menu = game_window;
+        menu = selector_menu;
         ctx.setPrevState(ctx.getState());
     }
+    else if(ctx.getState() == GameState::LOCAL_GAMEPLAY && 
+    ctx.getState()  != ctx.getPrevState())
+    {
+        local_game_window = new LocalGameWindow(window, ctx);
+        menu = local_game_window;
+        ctx.setPrevState(ctx.getState());
+    }
+    else if(ctx.getState() == GameState::AI_GAMEPLAY &&
+    ctx.getState() != ctx.getPrevState())
+    {
+        ai_game_window = new AIGameWindow(window, ctx);
+        menu = ai_game_window;
+        ctx.setPrevState(ctx.getState());
+    } 
 }
 
 void Game::Run()
@@ -64,7 +78,9 @@ void Game::Run()
 
 Game::~Game()
 {
-    delete game_window;
+    delete ai_game_window;
+    delete local_game_window;
+    delete selector_menu;
     delete options_menu;
     delete main_menu;
 }

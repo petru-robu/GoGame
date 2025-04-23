@@ -115,7 +115,7 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
     
     float cell_size = board_size / game_size;
 
-    board_background.setFillColor(sf::Color(252, 144, 3));
+    board_background.setFillColor(Colors::BOARD_BACKGROUND_COLOR);
     board_background.setSize({board_size+100, board_size+100});
     board_background.setPosition({cornerX-50, cornerY-50});
 
@@ -129,7 +129,7 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
             float currY = cornerY + (j)*cell_size;
             
             Piece piece(window, i, j, cell_size, {currX, currY});
-            piece.setColor(sf::Color::Black);
+            piece.setColor(Colors::BLACK);
             cell_line.push_back(piece);
         }
         piece_grid.push_back(cell_line);
@@ -144,7 +144,7 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
             float currY = cornerY + (j)*cell_size;
             
             Liberty lib(window, i, j, cell_size, {currX, currY});
-            lib.setColor(sf::Color::Black);
+            lib.setColor(Colors::BLACK);
             cell_line.push_back(lib);
         }
         liberty_grid.push_back(cell_line);
@@ -156,22 +156,22 @@ IDrawable(window), ctx(ctx), backend_board(ctx)
     for(int i=0; i<game_size; i++)
     {
         sf::RectangleShape grid_line_x;
-        grid_line_x.setFillColor(sf::Color(31, 17, 0));
+        grid_line_x.setFillColor(Colors::GRID_LINE_COLOR);
         grid_line_x.setSize({2, cell_size*(game_size-1)});
         grid_line_x.setPosition({cornerX + (i)*cell_size, cornerY});
         grid_linesX.push_back(grid_line_x);
 
         sf::RectangleShape grid_line_y;
-        grid_line_y.setFillColor(sf::Color(31, 17, 0));
+        grid_line_y.setFillColor(Colors::GRID_LINE_COLOR);
         grid_line_y.setSize({cell_size*(game_size-1), 2});
         grid_line_y.setPosition({cornerX, cornerY + (i)*cell_size});
         grid_linesY.push_back(grid_line_y);
 
         intersection_numbers.push_back(new Label(window, std::to_string(game_size - i), 25, 
-        sf::Color::Black, "fonts/arial-bold.ttf", {cornerX - 45, cornerY + (i)*cell_size}));
+        Colors::BLACK, "fonts/arial-bold.ttf", {cornerX - 45, cornerY + (i)*cell_size}));
         
         intersection_letters.push_back(new Label(window, std::string(1, 'A'+i), 25, 
-        sf::Color::Black, "fonts/arial-bold.ttf", {cornerX + (i)*cell_size, cornerY - 45}));
+        Colors::BLACK, "fonts/arial-bold.ttf", {cornerX + (i)*cell_size, cornerY - 45}));
 
     }
 }
@@ -188,7 +188,7 @@ void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
             if(!cell.isPlaced() && cell.getDrawableShape().getGlobalBounds().contains({mx,my}))
             {   
                 cell.setHovered(true);
-                cell.setColor(sf::Color(255,0,0,200));
+                cell.setColor(Colors::PIECE_HOVER_COLOR);
             }
             else
             {
@@ -246,11 +246,11 @@ void VisualBoard::process()
 
                 if(cell_type == CellType::BLACK)
                 {
-                    piece_grid[i][j].setColor(sf::Color::Black);
+                    piece_grid[i][j].setColor(Colors::BLACK);
                 }
                 else if(cell_type == CellType::WHITE)
                 {
-                    piece_grid[i][j].setColor(sf::Color::White);
+                    piece_grid[i][j].setColor(Colors::WHITE);
                 }
             }
             else
@@ -260,7 +260,7 @@ void VisualBoard::process()
             if(cell_type == CellType::LIBERTY)
             {
                 liberty_grid[i][j].setPlaced(true);
-                liberty_grid[i][j].setColor(sf::Color::Yellow);
+                liberty_grid[i][j].setColor(Colors::LIBERTY_COLOR);
             }
             else
                 liberty_grid[i][j].setPlaced(false);
