@@ -53,7 +53,6 @@ public:
     const std::string& font_path, sf::Vector2f position, bool borders);
 
     sf::FloatRect getBounds() const override;
-    bool hasBorders() const;
 
     void setColor(const sf::Color& color) override;
     void setPosition(sf::Vector2f position) override;

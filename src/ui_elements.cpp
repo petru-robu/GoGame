@@ -96,10 +96,6 @@ sf::FloatRect LabelBox::getBounds() const
     else
         return text.getGlobalBounds();
 }
-bool LabelBox::hasBorders() const
-{
-    return borders;
-}
 
 void LabelBox::setColor(const sf::Color& color)
 {
