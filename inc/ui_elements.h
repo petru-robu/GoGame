@@ -31,8 +31,8 @@ public:
     virtual sf::Vector2f getPosition() const;
     virtual sf::FloatRect getBounds() const;
 
-    virtual void setColor(const sf::Color& color);
-    virtual void setPosition(sf::Vector2f position);
+    virtual void setColor(const sf::Color& col);
+    virtual void setPosition(sf::Vector2f pos);
     virtual void setString(const std::string& new_str);
 
     virtual void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor);
@@ -54,8 +54,8 @@ public:
 
     sf::FloatRect getBounds() const override;
 
-    void setColor(const sf::Color& color) override;
-    void setPosition(sf::Vector2f position) override;
+    void setColor(const sf::Color& col) override;
+    void setPosition(sf::Vector2f pos) override;
     void setString(const std::string& new_str) override;
     void setBorders(bool borders);
 

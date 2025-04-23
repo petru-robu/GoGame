@@ -31,16 +31,16 @@ void Label::loadProprieties()
 }
 
 /* Setters */
-void Label::setColor(const sf::Color& c)
+void Label::setColor(const sf::Color& col)
 {
-    color = c;
-    text.setFillColor(color);
+    color = col;
+    text.setFillColor(col);
 }
 
 void Label::setPosition(sf::Vector2f pos)
 {
     position = pos;
-    text.setPosition(position);
+    text.setPosition(pos);
 }
 
 void Label::setString(const std::string& new_str)
@@ -97,16 +97,16 @@ sf::FloatRect LabelBox::getBounds() const
         return text.getGlobalBounds();
 }
 
-void LabelBox::setColor(const sf::Color& color)
+void LabelBox::setColor(const sf::Color& col)
 {
-    Label::setColor(color);
-    border.setOutlineColor(color);
+    Label::setColor(col);
+    border.setOutlineColor(col);
 }
 
-void LabelBox::setPosition(sf::Vector2f position)
+void LabelBox::setPosition(sf::Vector2f pos)
 {
-    Label::setPosition(position);
-    border.setPosition(position);
+    Label::setPosition(pos);
+    border.setPosition(pos);
 }   
 
 void LabelBox::setString(const std::string &new_str)
