@@ -118,9 +118,9 @@ void LabelBox::setString(const std::string &new_str)
     border.setPosition(position);
 }
 
-void LabelBox::setBorders(bool borders)
+void LabelBox::setBorders(bool b)
 {
-    this->borders = borders;
+    borders = b;
 }
 
 void LabelBox::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
