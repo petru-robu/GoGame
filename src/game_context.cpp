@@ -1,6 +1,6 @@
 #include "../inc/game_context.h"
 
-GameContext::GameContext(int gs = 13, GameType gt = GameType::LOCAL): game_size(gs), game_type(gt)
+GameContext::GameContext(int gs, GameType gt): game_size(gs), game_type(gt)
 {
     state = GameState::MAIN_MENU;
     prev_state = GameState::UNDEFINED;
