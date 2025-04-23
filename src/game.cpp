@@ -12,6 +12,9 @@ Game::Game(): ctx(9)
     main_menu = new MainMenu(window, ctx);
     selector_menu = new SelectorMenu(window, ctx);
 
+    ai_game_window = nullptr;
+    local_game_window = nullptr;
+
     menu = main_menu;
 }
 
@@ -78,8 +81,15 @@ void Game::Run()
 
 Game::~Game()
 {
-    delete ai_game_window;
-    delete local_game_window;
+    if(ai_game_window != nullptr)
+    {
+        delete ai_game_window;
+    }
+    if(local_game_window != nullptr)
+    {
+        delete local_game_window;
+    }
+        
     delete selector_menu;
     delete options_menu;
     delete main_menu;
