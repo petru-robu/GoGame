@@ -28,16 +28,16 @@ private:
     GameType game_type;
     
 public:
-    explicit GameContext(int gs);
+    explicit GameContext(int gs, GameType gt);
 
     void setState(GameState ns);
     void setPrevState(GameState ps);
     void setGameSize(int gs);
     void setGameType(GameType gt);
 
-    GameState getState();
-    GameState getPrevState();
-    int getGameSize();
+    GameState getState() const;
+    GameState getPrevState() const;
+    int getGameSize() const;
 };
 
 #endif

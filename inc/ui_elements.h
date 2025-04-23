@@ -25,17 +25,17 @@ protected:
     void loadProprieties();
 
 public:
-    Label(sf::RenderWindow& window, std::string str, float ch_size, sf::Color color, 
-    std::string font_path, sf::Vector2f position);
+    Label(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
+    const std::string& font_path, sf::Vector2f position);
 
-    sf::Vector2f getPosition();
-    sf::FloatRect getBounds();
+    virtual sf::Vector2f getPosition() const;
+    virtual sf::FloatRect getBounds() const;
 
-    void setColor(sf::Color color);
-    void setPosition(sf::Vector2f position);
-    void setString(std::string new_str);
+    virtual void setColor(const sf::Color& color);
+    virtual void setPosition(sf::Vector2f position);
+    virtual void setString(const std::string& new_str);
 
-    void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor);
+    virtual void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor);
 
     void Render() override;
 
@@ -49,18 +49,18 @@ protected:
     sf::RectangleShape border;
 
 public:
-    LabelBox(sf::RenderWindow& window, std::string str, float ch_size, sf::Color color, 
-    std::string font_path, sf::Vector2f position, bool borders);
+    LabelBox(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
+    const std::string& font_path, sf::Vector2f position, bool borders);
 
-    sf::FloatRect getBounds();
-    bool hasBorders();
+    sf::FloatRect getBounds() const override;
+    bool hasBorders() const;
 
-    void setColor(sf::Color color);
-    void setPosition(sf::Vector2f position);
-    void setString(std::string new_str);
+    void setColor(const sf::Color& color) override;
+    void setPosition(sf::Vector2f position) override;
+    void setString(const std::string& new_str) override;
     void setBorders(bool borders);
 
-    void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor);
+    void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor) override;
 
     void Render() override;
 

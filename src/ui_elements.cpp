@@ -1,7 +1,7 @@
 #include "../inc/ui_elements.h"
 
-Label::Label(sf::RenderWindow& window, std::string str = "text", float ch_size = 12, sf::Color color = sf::Color::Red, 
-std::string font_path = "", sf::Vector2f position = {0,0}):
+Label::Label(sf::RenderWindow& window, const std::string& str = "text", float ch_size = 12, sf::Color color = sf::Color::Red, 
+const std::string& font_path = "", sf::Vector2f position = {0,0}):
 IDrawable(window),
 str(str), ch_size(ch_size), color(color), font_path(font_path),
 position(position), text(font, "", 10)
@@ -18,10 +18,10 @@ void Label::calculatePosition()
 
 void Label::loadProprieties()
 {
-    auto font = ResourceManager::getInstance().getFont(font_path);
+    auto loaded_font = ResourceManager::getInstance().getFont(font_path);
     
-    if(font != nullptr)
-        text.setFont(*font);
+    if(loaded_font != nullptr)
+        text.setFont(*loaded_font);
 
     text.setString(str);
     text.setCharacterSize(ch_size);
@@ -31,7 +31,7 @@ void Label::loadProprieties()
 }
 
 /* Setters */
-void Label::setColor(sf::Color c)
+void Label::setColor(const sf::Color& c)
 {
     color = c;
     text.setFillColor(color);
@@ -43,18 +43,18 @@ void Label::setPosition(sf::Vector2f pos)
     text.setPosition(position);
 }
 
-void Label::setString(std::string new_str)
+void Label::setString(const std::string& new_str)
 {
     text.setString(new_str);
 }
 
 /* Getters */
-sf::Vector2f Label::getPosition()
+sf::Vector2f Label::getPosition() const
 {   
     return position;
 }
 
-sf::FloatRect Label::getBounds()
+sf::FloatRect Label::getBounds() const
 {
     return text.getGlobalBounds();
 }
@@ -74,8 +74,8 @@ void Label::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
         text.setFillColor(hoverColor);
 }
 
-LabelBox::LabelBox(sf::RenderWindow& window, std::string str, float ch_size, sf::Color color, 
-std::string font_path, sf::Vector2f position, bool borders): 
+LabelBox::LabelBox(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
+const std::string& font_path, sf::Vector2f position, bool borders): 
 Label(window, str, ch_size, color, font_path, position), 
 borders(borders)
 {
@@ -89,19 +89,19 @@ borders(borders)
     border.setOutlineThickness(3.f);
 }
 
-sf::FloatRect LabelBox::getBounds()
+sf::FloatRect LabelBox::getBounds() const
 {
     if(borders)
         return border.getGlobalBounds();
     else
         return text.getGlobalBounds();
 }
-bool LabelBox::hasBorders()
+bool LabelBox::hasBorders() const
 {
     return borders;
 }
 
-void LabelBox::setColor(sf::Color color)
+void LabelBox::setColor(const sf::Color& color)
 {
     Label::setColor(color);
     border.setOutlineColor(color);
@@ -113,7 +113,7 @@ void LabelBox::setPosition(sf::Vector2f position)
     border.setPosition(position);
 }   
 
-void LabelBox::setString(std::string new_str)
+void LabelBox::setString(const std::string &new_str)
 {
     Label::setString(new_str);
     auto text_bounds = text.getGlobalBounds();

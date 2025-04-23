@@ -1,6 +1,6 @@
 #include "../inc/game_context.h"
 
-GameContext::GameContext(int gs): game_size(gs)
+GameContext::GameContext(int gs = 13, GameType gt = GameType::LOCAL): game_size(gs), game_type(gt)
 {
     state = GameState::MAIN_MENU;
     prev_state = GameState::UNDEFINED;
@@ -25,15 +25,15 @@ void GameContext::setGameType(GameType gt)
 }
 
 //getters
-GameState GameContext::getState()
+GameState GameContext::getState() const
 {
     return state;
 }
-GameState GameContext::getPrevState()
+GameState GameContext::getPrevState() const
 {
     return prev_state;
 }
-int GameContext::getGameSize()
+int GameContext::getGameSize() const
 {
     return game_size;
 }
