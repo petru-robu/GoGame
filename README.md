@@ -1,8 +1,8 @@
 # Go Game
-An implementation of the Game of Go, done in C++ using the SFML library. The application simulates the go rules and applies them to the board. The game can be played locally by two players or against an AI integrated in the application.
+An implementation of the Game of Go, done in C++ using the SFML library. The application simulates the go rules and applies them to the board. The game can be played locally by two players. In the future, the application should support playing on a server and playing against an AI agent.
 
 ## Implementation details
-The application is structured in the follwing sections: frontend, backend and AI integration.
+The application is structured in the follwing sections: frontend and backend.
 
 ### Frontend
 The frontend was done using the [SFML library](https://www.sfml-dev.org/), a very useful tool for creating GUI in C++.
@@ -14,8 +14,6 @@ The application makes use of some classes that deal with the visual aspect of th
 The backend is the most intricate part of the implementation. I decided to go with the following when implementing the game logic:
 - The backend consists of a grid of Intersections. Every intersection is of a certain type (WHITE, BLACK, WHITE_LIBERTY, BLACK_LIBERTY or EMPTY).
 - For efficiency and not recomputing the state of the board every move, there are groups of stones, which reference intersections. In a group of stones we have a set of pieces and a set of liberties. Also, every intersection references a group of stones as well (may be null, if an intersection is not part of a group). When th groups become connected, they are merged. For further optimization, the groups merge by size(merge the smaller group to the bigger one). 
-
-### AI Integration
 
 ## Compilation instructions
 The project is configured via [CMake](https://cmake.org/).
