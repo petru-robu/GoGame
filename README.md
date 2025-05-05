@@ -2,7 +2,7 @@
 An implementation of the Game of Go, done in C++ using the SFML library. The application simulates the go rules and applies them to the board. The game can be played locally by two players. In the future, the application should support playing on a server and playing against an AI agent.
 
 ## Implementation details
-The application is structured in the follwing sections: frontend and backend.
+The application is structured in the follwing sections: **frontend** and **backend**.
 
 ### Frontend
 The frontend was done using the [SFML library](https://www.sfml-dev.org/), a very useful tool for creating GUI in C++.
@@ -120,9 +120,6 @@ public:
 ```
 When adding a stone or modifying the board's current configuration, the groups are adjusted dynamically. This is a tricky process split into multiple parts: adding a stone, managing group merges, managing captures, managing suicide situations and managing the [Ko rule](https://www.pandanet.co.jp/English/learning_go/learning_go_8.html). The Ko rule is implemented using [Zobrist Hashing](https://en.wikipedia.org/wiki/Zobrist_hashing) for efficient computation of past moves.
 
-
-
-
 ## Compilation instructions
 The project is configured via [CMake](https://cmake.org/). <br>
 Necessary libraries on linux (assuming debian installation).
@@ -162,6 +159,12 @@ cmake --build build --config Debug --parallel 6
 cmake --install build --config Debug --prefix install_dir
 # or ./scripts/cmake.sh install
 ```
+
+## Future Improvements
+Some features to be added to the application:
+- Playing against a computer: KataGO agent.
+- Playing on a server.
+- Move History. Create an efficient system for keeping a history of moves. 
 
 ## Tasks
 ### Tema 0:
