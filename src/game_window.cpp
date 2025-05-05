@@ -1,11 +1,11 @@
 #include "../inc/game_window.h"
 
-LocalGameWindow::LocalGameWindow(sf::RenderWindow &window, GameContext &ctx):
-IMenu(window, ctx),
+LocalGameWindow::LocalGameWindow(sf::RenderWindow &window):
+IMenu(window),
 turn(CellType::BLACK),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
-    visual_board = new VisualBoard(window, ctx);
+    visual_board = new VisualBoard(window);
 
     title = new Label(window, "Game of Go", 35.f, Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {220, 70});
     end_game_button = new Button(window, "End Game", 30.f,  Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 130});
@@ -35,8 +35,8 @@ void LocalGameWindow::EventHandler(const std::optional<sf::Event> &event)
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
-            ctx.setState(GameState::MAIN_MENU);
-            ctx.setGameRunningState(false);
+            GameContext::getInstance().setState(GameState::MAIN_MENU);
+            GameContext::getInstance().setGameRunningState(false);
         }
     }
 
@@ -54,19 +54,19 @@ void LocalGameWindow::EventHandler(const std::optional<sf::Event> &event)
 
     if(end_game_button->WasClicked())
     {
-        ctx.setState(GameState::MAIN_MENU);
-        ctx.setGameRunningState(false);
+        GameContext::getInstance().setState(GameState::MAIN_MENU);
+        GameContext::getInstance().setGameRunningState(false);
     }
 
     if(clear_board_button->WasClicked())
     {
         delete visual_board;
-        visual_board = new VisualBoard(window, ctx);
+        visual_board = new VisualBoard(window);
     }
 
     if(options_menu_button->WasClicked())
     {
-        ctx.setState(GameState::OPTIONS);
+        GameContext::getInstance().setState(GameState::OPTIONS);
     }
 
     if(pass_button->WasClicked())
@@ -132,6 +132,7 @@ void LocalGameWindow::Process()
     end_game_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
     clear_board_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
     options_menu_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
+    pass_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
 
     visual_board->manageHovers(mouse_pos);
 }
@@ -141,19 +142,18 @@ LocalGameWindow::~LocalGameWindow()
     delete visual_board;
 }
 
-/*************************************8 */
-AIGameWindow::AIGameWindow(sf::RenderWindow &window, GameContext &ctx):
-IMenu(window, ctx),
+AIGameWindow::AIGameWindow(sf::RenderWindow &window):
+IMenu(window),
 turn(CellType::BLACK),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
-    visual_board = new VisualBoard(window, ctx);
+    visual_board = new VisualBoard(window);
 
     sf::Color sprite_color = backgroundSprite.getColor();
     sprite_color.a = 80;
     backgroundSprite.setColor(sprite_color);
 
-    title = new Label(window, "Game of Go", 35.f, Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {220, 70});
+    title = new Label(window, "AI is work in progress!\n\nPlease come back when it's ready.\n\nMeanwhile, you can play locally.", 35.f, Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {700, 350});
     end_game_button = new Button(window, "End Game", 30.f,  Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 130});
     clear_board_button = new Button(window, "Clear Board", 30.f,  Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 190});
     options_menu_button = new Button(window, "Options", 30.f, Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 250});
@@ -172,8 +172,8 @@ void AIGameWindow::EventHandler(const std::optional<sf::Event> &event)
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
-            ctx.setState(GameState::MAIN_MENU);
-            ctx.setGameRunningState(false);
+            GameContext::getInstance().setState(GameState::MAIN_MENU);
+            GameContext::getInstance().setGameRunningState(false);
         }
     }
 
@@ -202,19 +202,19 @@ void AIGameWindow::EventHandler(const std::optional<sf::Event> &event)
 
     if(end_game_button->WasClicked())
     {
-        ctx.setState(GameState::MAIN_MENU);
-        ctx.setGameRunningState(false);
+        GameContext::getInstance().setState(GameState::MAIN_MENU);
+        GameContext::getInstance().setGameRunningState(false);
     }
 
     if(clear_board_button->WasClicked())
     {
         delete visual_board;
-        visual_board = new VisualBoard(window, ctx);
+        visual_board = new VisualBoard(window);
     }
 
     if(options_menu_button->WasClicked())
     {
-        ctx.setState(GameState::OPTIONS);
+        GameContext::getInstance().setState(GameState::OPTIONS);
     }
 
     for(IDrawable* el:ui_elements)
@@ -231,12 +231,8 @@ void AIGameWindow::Render()
 
     window.draw(backgroundSprite);
 
-    for(auto &el:ui_elements)
-    {
-        el->Render();
-    }
-
-    visual_board->Render();
+    
+    title->Render();
     window.display();
 }
 
@@ -245,6 +241,7 @@ void AIGameWindow::Process()
     visual_board->process();
 
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+
     end_game_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
     clear_board_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
 

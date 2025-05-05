@@ -1,7 +1,7 @@
 #include "../inc/menus.h"
 
-MainMenu::MainMenu(sf::RenderWindow &window, GameContext& ctx): 
-IMenu(window, ctx),
+MainMenu::MainMenu(sf::RenderWindow &window): 
+IMenu(window),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
     title = new Label(window, "Game of go", 65.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {0,0});
@@ -29,6 +29,7 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 
 void MainMenu::EventHandler(const std::optional<sf::Event> &event)
 {
+    GameContext& ctx = GameContext::getInstance();
     if(const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
@@ -90,17 +91,40 @@ void MainMenu::Process()
 }
 
 
-OptionsMenu::OptionsMenu(sf::RenderWindow &window, GameContext& ctx):
-IMenu(window, ctx),
+OptionsMenu::OptionsMenu(sf::RenderWindow &window):
+IMenu(window),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
-    float wx = window.getSize().x;
-    float wy = window.getSize().y;
+    float mx = window.getSize().x/2;
+    float my = window.getSize().y/2;
 
     back_button = new Button(window, "Back", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0,0});
-    back_button->setPosition({wx/2, wy/2});
+    
+    sounds_enabled = new Label(window, "Toggle Sounds:", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {mx-400,my-300});
+    music_enabled = new Label(window, "Toggle Music:", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {mx-400,my-200});
+    liberties_enabled = new Label(window, "Toggle visible liberties:", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {mx-400,my-100});
+    
+    sounds_enabled_on = new Button(window, "on", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+300,my-300}, true);
+    sounds_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+400,my-300}, false);
+
+    music_enabled_on = new Button(window, "on", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+300,my-200}, true);
+    music_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+400,my-200}, false);
+
+    liberties_enabled_on = new Button(window, "on", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+300,my-100}, false);
+    liberties_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+400,my-100}, true);
+
+    back_button->setPosition({mx, my+200});
 
     ui_elements.push_back(back_button);
+    ui_elements.push_back(sounds_enabled);
+    ui_elements.push_back(music_enabled);
+    ui_elements.push_back(liberties_enabled);
+    ui_elements.push_back(sounds_enabled_on);
+    ui_elements.push_back(sounds_enabled_off);
+    ui_elements.push_back(music_enabled_on);
+    ui_elements.push_back(music_enabled_off);
+    ui_elements.push_back(liberties_enabled_off);
+    ui_elements.push_back(liberties_enabled_on);
 
     sf::Color sprite_color = backgroundSprite.getColor();
     sprite_color.a = 80;
@@ -109,10 +133,13 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 
 void OptionsMenu::EventHandler(const std::optional<sf::Event> &event)
 {
+    GameContext& ctx = GameContext::getInstance();
+
     if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
+            GameContext& ctx = GameContext::getInstance();
             ctx.setState(ctx.getLastState());
         }
     }
@@ -129,8 +156,55 @@ void OptionsMenu::EventHandler(const std::optional<sf::Event> &event)
 
     if(back_button->WasClicked())
     {
-        back_button->ResetClick();
         ctx.setState(ctx.getLastState());
+    }
+
+    if(sounds_enabled_on->WasClicked())
+    {
+        ctx.setEnableSounds(true);
+        sounds_enabled_on->setBorders(true);
+        sounds_enabled_off->setBorders(false);
+    }
+    if(sounds_enabled_off->WasClicked())
+    {
+        ctx.setEnableSounds(false);
+        sounds_enabled_on->setBorders(false);
+        sounds_enabled_off->setBorders(true);
+    }
+
+    if(music_enabled_on->WasClicked())
+    {
+        AudioPlayer::getInstance().playMusic();
+        ctx.setEnableMusic(true);
+        music_enabled_on->setBorders(true);
+        music_enabled_off->setBorders(false);
+    }
+    if(music_enabled_off->WasClicked())
+    {
+        AudioPlayer::getInstance().stopMusic();
+        ctx.setEnableMusic(false);
+        music_enabled_on->setBorders(false);
+        music_enabled_off->setBorders(true);
+    }
+
+    if(liberties_enabled_on->WasClicked())
+    {
+        ctx.setEnableLiberties(true);
+        liberties_enabled_on->setBorders(true);
+        liberties_enabled_off->setBorders(false);
+    }
+    if(liberties_enabled_off->WasClicked())
+    {   
+        ctx.setEnableLiberties(false);
+        liberties_enabled_on->setBorders(false);
+        liberties_enabled_off->setBorders(true);
+    }
+
+    for(IDrawable* el:ui_elements)
+    {
+        Button* btn = dynamic_cast<Button*>(el);
+        if(btn != nullptr)
+            btn->ResetClick();
     }
 }
 
@@ -157,8 +231,8 @@ void OptionsMenu::Process()
     }
 }
 
-SelectorMenu::SelectorMenu(sf::RenderWindow &window, GameContext& ctx):
-IMenu(window, ctx),
+SelectorMenu::SelectorMenu(sf::RenderWindow &window):
+IMenu(window),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
     select_board_size = new Label(window, "select board size: ", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {0,0});
@@ -171,11 +245,11 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     l_13x13 = new Button(window, "13 by 13", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0,0}, true);
     l_19x19 = new Button(window, "19 by 19", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0,0}, false);
 
-    l_AI = new Button(window, "Play vs ai", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0,0}, true);
-    l_LOCAL = new Button(window, "Play Locally", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0,0}, false);
+    l_AI = new Button(window, "Play vs ai", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0,0}, false);
+    l_LOCAL = new Button(window, "Play Locally", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0,0}, true);
 
     curr_game_size = 13;
-    curr_game_mode = GameType::AI;
+    curr_game_mode = GameType::LOCAL;
 
     float mx = window.getSize().x/2;
     float my = window.getSize().y/2;
@@ -189,8 +263,8 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     l_13x13->setPosition({mx, my-300});
     l_19x19->setPosition({mx+250, my-300});
 
-    l_AI->setPosition({mx-160, my});
-    l_LOCAL->setPosition({mx+140, my});
+    l_LOCAL->setPosition({mx-130, my});
+    l_AI->setPosition({mx+180, my});
 
     ui_elements.push_back(select_board_size);
     ui_elements.push_back(select_game_type);
@@ -209,11 +283,13 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 
 void SelectorMenu::EventHandler(const std::optional<sf::Event> &event)
 {
+    GameContext& ctx = GameContext::getInstance();
+
     if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
-            ctx.setState(GameState::MAIN_MENU);
+           ctx.setState(GameState::MAIN_MENU);
         }
     }
 

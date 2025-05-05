@@ -1,6 +1,6 @@
 #include "../inc/game.h"
 
-Game::Game(): ctx(13, GameType::AI)
+Game::Game()
 {
     unsigned int window_width = 1920;
     unsigned int window_height = 1080;
@@ -8,9 +8,9 @@ Game::Game(): ctx(13, GameType::AI)
     window.create(sf::VideoMode({window_width, window_height}), "Go Game!");
     window.setFramerateLimit(60);
 
-    options_menu = new OptionsMenu(window, ctx);
-    main_menu = new MainMenu(window, ctx);
-    selector_menu = new SelectorMenu(window, ctx);
+    options_menu = new OptionsMenu(window);
+    main_menu = new MainMenu(window);
+    selector_menu = new SelectorMenu(window);
 
     ai_game_window = nullptr;
     local_game_window = nullptr;
@@ -20,12 +20,14 @@ Game::Game(): ctx(13, GameType::AI)
 
 void Game::Init()
 {
-    ctx.setState(GameState::MAIN_MENU);
-    ctx.setPrevState(GameState::OPTIONS);
+    GameContext::getInstance().setState(GameState::MAIN_MENU);
+    GameContext::getInstance().setPrevState(GameState::OPTIONS);
 }
 
 void Game::changeState()
 {   
+    GameContext& ctx = GameContext::getInstance();
+    
     if(ctx.getState() == GameState::MAIN_MENU && 
     ctx.getState()  != ctx.getPrevState())
     {   
@@ -49,7 +51,7 @@ void Game::changeState()
     {
         if(ctx.getGameRunningState() == false)
         {
-            local_game_window = new LocalGameWindow(window, ctx);
+            local_game_window = new LocalGameWindow(window);
             ctx.setGameRunningState(true);
         }
 
@@ -61,7 +63,7 @@ void Game::changeState()
     {
         if(ctx.getGameRunningState() == false)
         {
-            ai_game_window = new AIGameWindow(window, ctx);
+            ai_game_window = new AIGameWindow(window);
             ctx.setGameRunningState(true);
         }
         menu = ai_game_window;
@@ -73,7 +75,10 @@ void Game::Run()
 {
     Init();
 
-    //AudioPlayer::getInstance().playMusic();
+    if(GameContext::getInstance().getMusicEnabled())
+    {
+        AudioPlayer::getInstance().playMusic();
+    }
     
     while(window.isOpen())
     {
@@ -84,12 +89,6 @@ void Game::Run()
         while (const std::optional event = window.pollEvent()) 
         {
             menu->EventHandler(event);
-            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
-            {
-                if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
-                {
-                }
-            }
         }
 
         menu->Render();

@@ -21,17 +21,24 @@ enum class GameType
 class GameContext
 {
 private:
-    GameState state;
-    GameState prev_state;
-    GameState last_state;
+    GameState state = GameState::MAIN_MENU;
+    GameState prev_state = GameState::UNDEFINED;
+    GameState last_state = GameState::UNDEFINED;
 
-    int game_size;
-    GameType game_type;
+    int game_size = 13;
+    GameType game_type = GameType::LOCAL;
 
-    bool game_running;
+    bool game_running = false;
+    bool sounds_enabled = true;
+    bool music_enabled = true;
+    bool liberties_enabled = false;
+
+    GameContext();
+    GameContext(const GameContext&) = delete;
+    void operator=(const GameContext&) = delete;
     
 public:
-    explicit GameContext(int gs, GameType gt);
+    static GameContext& getInstance();
 
     void setState(GameState ns);
     void setPrevState(GameState ps);
@@ -39,11 +46,19 @@ public:
     void setGameType(GameType gt);
     void setGameRunningState(bool gr);
 
+    void setEnableSounds(bool es);
+    void setEnableMusic(bool em);
+    void setEnableLiberties(bool el);
+
     GameState getState() const;
     GameState getPrevState() const;
     GameState getLastState() const;
     int getGameSize() const;
     bool getGameRunningState() const;
+
+    bool getSoundsEnabled() const;
+    bool getMusicEnabled() const;
+    bool getLibertiesEnabled() const;
 };
 
 #endif

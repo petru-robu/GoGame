@@ -10,7 +10,6 @@
 class BackendBoard
 {
 private:
-    GameContext& ctx;
     std::vector<std::vector<Intersection>> board_matrix;
 
     std::set<Group*> white_groups;
@@ -20,7 +19,7 @@ private:
     void capture(Group* group);
 
 public:
-    explicit BackendBoard(GameContext& ctx);
+    explicit BackendBoard();
 
     bool addStone(int cx, int cy, CellType type);
 

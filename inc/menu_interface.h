@@ -8,10 +8,9 @@ class IMenu
 {
 protected:
     sf::RenderWindow& window;
-    GameContext& ctx;
     
 public:
-    IMenu(sf::RenderWindow& window, GameContext&ctx): window(window), ctx(ctx){}
+    IMenu(sf::RenderWindow& window): window(window){}
     
     virtual void Render() = 0;
     virtual void Process() = 0;

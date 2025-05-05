@@ -71,29 +71,5 @@ public:
 
 };
 
-// class LabelBox: public Label
-// {
-// protected:
-//     bool borders;
-//     sf::RectangleShape border;
-
-// public:
-//     LabelBox(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
-//     const std::string& font_path, sf::Vector2f position, bool borders);
-
-//     sf::FloatRect getBounds() const override;
-
-//     void setColor(const sf::Color& col) override;
-//     void setPosition(sf::Vector2f pos) override;
-//     void setString(const std::string& new_str) override;
-//     void setBorders(bool b);
-
-//     void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor) override;
-
-//     void Render() override;
-
-//     ~LabelBox() override = default;
-// };
-
 
 #endif

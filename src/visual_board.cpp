@@ -106,12 +106,12 @@ Liberty::~Liberty()
 
 }
 
-VisualBoard::VisualBoard(sf::RenderWindow& window, GameContext& ctx): 
-IDrawable(window), ctx(ctx), backend_board(ctx)
+VisualBoard::VisualBoard(sf::RenderWindow& window): 
+IDrawable(window)
 {
     float board_size = 800;
     float cornerX = 570, cornerY = 90;
-    int game_size = ctx.getGameSize();
+    int game_size = GameContext::getInstance().getGameSize();
     
     float cell_size = board_size / game_size;
 
@@ -215,7 +215,11 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
                 bool move_state = backend_board.addStone(cx, cy, turn);
                 if(move_state == true)
                 {
-                    AudioPlayer::getInstance().playPieceSound();
+                    if(GameContext::getInstance().getSoundsEnabled())
+                    {
+                        AudioPlayer::getInstance().playPieceSound();
+                    }
+
                     //next player turn
                     if(turn == CellType::WHITE)
                     {
@@ -229,8 +233,11 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
                 else
                 {
                     //invalid move
-                    AudioPlayer::getInstance().playErrorPieceSound();
-                }
+                    if(GameContext::getInstance().getSoundsEnabled())
+                    {
+                        AudioPlayer::getInstance().playErrorPieceSound();
+                    }
+                }   
             }
         }       
     }
@@ -239,7 +246,7 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
 void VisualBoard::process()
 {
     std::vector<std::vector<Intersection>> board_matrix = backend_board.getBoardMatrix();
-    int gs = ctx.getGameSize();
+    int gs = GameContext::getInstance().getGameSize();
 
     for(int i=0; i<gs; i++)
         for(int j=0; j<gs; j++)
@@ -299,14 +306,18 @@ void VisualBoard::Render()
         }
     }
 
-    for(auto &line:liberty_grid)
+    if(GameContext::getInstance().getLibertiesEnabled() == true)
     {
-        for(auto &liberty:line)
+        for(auto &line:liberty_grid)
         {
-            if(liberty.isPlaced())
-                window.draw(liberty.getDrawableShape());
+            for(auto &liberty:line)
+            {
+                if(liberty.isPlaced())
+                    window.draw(liberty.getDrawableShape());
+            }
         }
     }
+    
 }
 
 VisualBoard::~VisualBoard()

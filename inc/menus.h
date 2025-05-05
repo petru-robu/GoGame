@@ -21,7 +21,7 @@ private:
     sf::Sprite backgroundSprite;
 
 public:
-    MainMenu(sf::RenderWindow &window, GameContext &ctx);
+    MainMenu(sf::RenderWindow &window);
 
     void Render() override;
     void Process() override;
@@ -33,12 +33,21 @@ class OptionsMenu : public IMenu
 {
 private:
     Button* back_button;
+
+    Label* sounds_enabled;
+    Button* sounds_enabled_on, *sounds_enabled_off;
+
+    Label* music_enabled;
+    Button* music_enabled_on, *music_enabled_off;
+
+    Label* liberties_enabled;
+    Button* liberties_enabled_on, *liberties_enabled_off;
     
     std::vector<IDrawable*> ui_elements;
 
     sf::Sprite backgroundSprite;
 public:
-    OptionsMenu(sf::RenderWindow &window, GameContext &ctx);
+    OptionsMenu(sf::RenderWindow &window);
 
     void Render() override;
     void Process() override;
@@ -68,7 +77,7 @@ private:
     GameType curr_game_mode;
 
 public:
-    SelectorMenu(sf::RenderWindow &window, GameContext &ctx);
+    SelectorMenu(sf::RenderWindow &window);
 
     void Render() override;
     void Process() override;

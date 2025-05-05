@@ -69,8 +69,6 @@ public:
 class VisualBoard: public IDrawable
 {
 private:
-    GameContext& ctx;
-
     BackendBoard backend_board;
 
     sf::RectangleShape board_background;
@@ -85,7 +83,7 @@ private:
     std::vector<Label*> intersection_letters;
 
 public:
-    VisualBoard(sf::RenderWindow& window, GameContext &ctx);
+    VisualBoard(sf::RenderWindow& window);
 
     void process();
     void manageHovers(sf::Vector2i mouse_pos);

@@ -1,10 +1,12 @@
 #include "../inc/game_context.h"
 
-GameContext::GameContext(int gs, GameType gt): game_size(gs), game_type(gt)
+GameContext::GameContext()
+{}
+
+GameContext& GameContext::getInstance()
 {
-    state = GameState::MAIN_MENU;
-    prev_state = GameState::UNDEFINED;
-    game_running = false;
+    static GameContext instance;
+    return instance;
 }
 
 //setters
@@ -30,6 +32,20 @@ void GameContext::setGameRunningState(bool gr)
     game_running = gr;
 }
 
+void GameContext::setEnableSounds(bool es)
+{
+    sounds_enabled = es;
+}
+void GameContext::setEnableMusic(bool em)
+{
+    music_enabled = em;
+}
+void GameContext::setEnableLiberties(bool el)
+{
+    liberties_enabled = el;
+}
+
+
 //getters
 GameState GameContext::getState() const
 {
@@ -50,4 +66,17 @@ GameState GameContext::getLastState() const
 bool GameContext::getGameRunningState() const
 {
     return game_running;
+}
+
+bool GameContext::getSoundsEnabled() const
+{
+    return sounds_enabled;
+}
+bool GameContext::getMusicEnabled() const
+{
+    return music_enabled;
+}
+bool GameContext::getLibertiesEnabled() const
+{
+    return liberties_enabled;
 }

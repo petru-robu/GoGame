@@ -5,7 +5,10 @@ button_sound(*ResourceManager::getInstance().getSoundBuffer("./audio/button.wav"
 piece_sound(*ResourceManager::getInstance().getSoundBuffer("./audio/stone_place.wav")),
 error_piece_sound(*ResourceManager::getInstance().getSoundBuffer("./audio/wrong.wav"))
 {
-    music.openFromFile("./audio/music.ogg");
+    if(!music.openFromFile("./audio/music.ogg"))
+    {
+        std::cerr<<"Cannot open music file!\n";
+    }
 }
 
 AudioPlayer& AudioPlayer::getInstance()
@@ -29,5 +32,11 @@ void AudioPlayer::playErrorPieceSound()
 void AudioPlayer::playMusic()
 {
     music.setVolume(40);
+    music.setLooping(true);
     music.play();
+}
+
+void AudioPlayer::stopMusic()
+{
+    music.pause();
 }

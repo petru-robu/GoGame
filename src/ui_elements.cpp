@@ -175,7 +175,10 @@ void Button::HandleClick(const std::optional<sf::Event> &event)
             if(this->getBounds().contains({mx, my}))
             {
                 clicked = true;
-                AudioPlayer::getInstance().playButtonSound();
+                if(GameContext::getInstance().getSoundsEnabled() == true)
+                {
+                    AudioPlayer::getInstance().playButtonSound();
+                }
             }
                 
         }

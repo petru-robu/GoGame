@@ -5,6 +5,7 @@
 #include <string>
 
 #include "resource_manager.h"
+#include "game_context.h"
 
 
 class AudioPlayer 
@@ -28,6 +29,7 @@ public:
     void playPieceSound();
     void playErrorPieceSound();
     void playMusic();
+    void stopMusic();
 };
 
 

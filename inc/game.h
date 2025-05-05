@@ -15,7 +15,6 @@ class Game
 {
 private:
     sf::RenderWindow window;
-    GameContext ctx;
 
     IMenu* menu;
     OptionsMenu* options_menu;

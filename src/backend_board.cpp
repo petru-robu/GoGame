@@ -1,9 +1,9 @@
 #include "../inc/backend_board.h"
 
 /*board*/
-BackendBoard::BackendBoard(GameContext& ctx): ctx(ctx)
+BackendBoard::BackendBoard()
 {
-    int gs = ctx.getGameSize();
+    int gs = GameContext::getInstance().getGameSize();
     for(int i=0; i<gs; i++)
     {
         std::vector<Intersection> line;
@@ -17,7 +17,7 @@ BackendBoard::BackendBoard(GameContext& ctx): ctx(ctx)
 
 void BackendBoard::update_liberties(Group* group)
 {
-    int gs = ctx.getGameSize();
+    int gs = GameContext::getInstance().getGameSize();
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     auto group_stones = group->get_stones();
@@ -47,7 +47,7 @@ void BackendBoard::capture(Group* captured_group)
 {
     std::cout<<"Captured stone size: "<<captured_group->get_stones().size()<<"and liberties size: "<<captured_group->get_liberties().size()<<'\n';
 
-    int gs = ctx.getGameSize();
+    int gs = GameContext::getInstance().getGameSize();
     std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     std::set<Group*> adj_groups_to_captured;
@@ -111,7 +111,7 @@ bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
     else if(initial_type == CellType::LIBERTY)
     {
         //we are placing on liberty
-        int gs = ctx.getGameSize();
+        int gs = GameContext::getInstance().getGameSize();
         std::vector<std::pair<int, int>> directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
         auto groups_of_covered_liberty = curr_inter->getGroups();    
@@ -311,42 +311,6 @@ bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
             white_groups.insert(newGroup);
         }
     }
-    // int idx = 1;
-
-    // for(const auto &grp:white_groups)
-    // {
-    //     std::cout<<"Group W"<<idx<<": ";
-
-    //     auto grp_stones = grp->get_stones();
-    //     for(auto inter : grp_stones)
-    //     {
-    //         std::cout<<'('<<inter->getCoords().second + 1<<',';
-    //         std::cout<<inter->getCoords().first + 1<<") ";
-    //     }
-
-    //     std::cout<<"Liberty count: "<<grp->get_liberties().size();
-    //     std::cout<<'\n';
-    //     idx++;
-
-    // }
-
-    // idx = 1;
-    // for(auto &grp:black_groups)
-    // {
-    //     std::cout<<"Group B"<<idx<<": ";
-
-    //     auto grp_stones = grp->get_stones();
-    //     for(auto inter : grp_stones)
-    //     {
-    //         std::cout<<'('<<inter->getCoords().second + 1<<',';
-    //         std::cout<<inter->getCoords().first + 1<<") ";
-    //     }
-    //     std::cout<<"Liberty count: "<<grp->get_liberties().size();
-    //     std::cout<<'\n';
-    //     idx++;
-    // }
-
-
     return true;
 }
 
