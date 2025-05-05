@@ -83,7 +83,7 @@ private:
     std::vector<Label*> intersection_letters;
 
 public:
-    VisualBoard(sf::RenderWindow& window);
+    explicit VisualBoard(sf::RenderWindow& window);
 
     void process();
     void manageHovers(sf::Vector2i mouse_pos);
