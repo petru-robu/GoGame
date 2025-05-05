@@ -78,6 +78,44 @@ namespace Colors
     const sf::Color LIBERTY_COLOR = sf::Color(255, 234, 0);
 }
 ```
+#### Error Handling
+Error handling is essential for both frontend and backend. There is an exception hierarchy built in. My application is susceptible to these types of errors in most part:
+```
+class GameException : public std::exception 
+{
+protected:
+    std::string message;
+public:
+    explicit GameException(const std::string& msg);
+    const char* what() const noexcept override;
+};
+class ResourceLoadException : public GameException
+class InvalidMoveException : public GameException 
+```
+An exception may be thrown like this in *backend_board*:
+```
+if(hasFriendlyGroup && !friendlyGroupAlive && !hasEmptyNeighbour && enemy_capture_cnt == 0)
+{
+    //This move is suicide (do not allow)
+    //revert changes
+    for(auto grp:groups_of_covered_liberty)
+        grp->addLiberty(curr_inter);
+    throw InvalidMoveException("Suicide move!");
+}
+```
+And caught like this in *visual_board*:
+```
+try
+{
+    backend_board.addStone(cx, cy, turn);        
+}
+catch (const InvalidMoveException& e)
+{
+    //invalid move
+    std::cout<<e.what()<<"\n";
+}
+```
+
 
 ### Backend
 The backend is the most intricate part of the implementation. I decided to go with the following when implementing the game logic: <br>
