@@ -150,10 +150,10 @@ void Button::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
     }   
 }
 
-bool Button::hasBorders()
-{
-    return borders;
-}
+// bool Button::hasBorders()
+// {
+//     return borders;
+// }
 
 void Button::Render()
 {

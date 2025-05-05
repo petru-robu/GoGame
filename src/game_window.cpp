@@ -139,6 +139,9 @@ void LocalGameWindow::Process()
 
 LocalGameWindow::~LocalGameWindow()
 {
+    for(auto &el: ui_elements)
+        delete el;
+        
     delete visual_board;
 }
 
@@ -250,5 +253,8 @@ void AIGameWindow::Process()
 
 AIGameWindow::~AIGameWindow()
 {
+    for(auto &el: ui_elements)
+        delete el;
+
     delete visual_board;
 }

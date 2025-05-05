@@ -21,11 +21,15 @@ private:
     sf::Sprite backgroundSprite;
 
 public:
-    MainMenu(sf::RenderWindow &window);
+    explicit MainMenu(sf::RenderWindow &window);
 
     void Render() override;
     void Process() override;
     void EventHandler(const std::optional<sf::Event> &event) override;
+
+    MainMenu(const MainMenu&) = delete;
+    void operator=(const MainMenu&) = delete;
+    ~MainMenu() override;
 };
 
 
@@ -47,11 +51,15 @@ private:
 
     sf::Sprite backgroundSprite;
 public:
-    OptionsMenu(sf::RenderWindow &window);
+    explicit OptionsMenu(sf::RenderWindow &window);
 
     void Render() override;
     void Process() override;
     void EventHandler(const std::optional<sf::Event> &event) override;
+
+    OptionsMenu(const OptionsMenu&) = delete;
+    void operator=(const OptionsMenu&) = delete;
+    ~OptionsMenu() override;
 };
 
 class SelectorMenu : public IMenu
@@ -77,11 +85,15 @@ private:
     GameType curr_game_mode;
 
 public:
-    SelectorMenu(sf::RenderWindow &window);
+    explicit SelectorMenu(sf::RenderWindow &window);
 
     void Render() override;
     void Process() override;
     void EventHandler(const std::optional<sf::Event> &event) override;
+
+    SelectorMenu(const SelectorMenu&) = delete;
+    void operator=(const SelectorMenu&) = delete;
+    ~SelectorMenu() override;
 };
 
 #endif

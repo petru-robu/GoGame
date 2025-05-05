@@ -26,7 +26,7 @@ private:
     sf::Sprite backgroundSprite;
     
 public:
-    LocalGameWindow(sf::RenderWindow &window);
+    explicit LocalGameWindow(sf::RenderWindow &window);
     void EventHandler(const std::optional<sf::Event> &event) override;
     void Render() override;
     void Process() override;
@@ -55,7 +55,7 @@ private:
     sf::Sprite backgroundSprite;
     
 public:
-    AIGameWindow(sf::RenderWindow &window);
+    explicit AIGameWindow(sf::RenderWindow &window);
     void EventHandler(const std::optional<sf::Event> &event) override;
     void Render() override;
     void Process() override;

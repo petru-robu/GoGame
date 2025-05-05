@@ -90,6 +90,11 @@ void MainMenu::Process()
     }
 }
 
+MainMenu::~MainMenu()
+{
+    for(auto &el: ui_elements)
+        delete el;
+}
 
 OptionsMenu::OptionsMenu(sf::RenderWindow &window):
 IMenu(window),
@@ -139,7 +144,6 @@ void OptionsMenu::EventHandler(const std::optional<sf::Event> &event)
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
-            GameContext& ctx = GameContext::getInstance();
             ctx.setState(ctx.getLastState());
         }
     }
@@ -229,6 +233,12 @@ void OptionsMenu::Process()
         if(btn != nullptr)
             btn->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
     }
+}
+
+OptionsMenu::~OptionsMenu()
+{
+    for(auto &el: ui_elements)
+        delete el;
 }
 
 SelectorMenu::SelectorMenu(sf::RenderWindow &window):
@@ -393,4 +403,10 @@ void SelectorMenu::Process()
     
     play_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
     back_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
+}
+
+SelectorMenu::~SelectorMenu()
+{
+    for(auto &el: ui_elements)
+        delete el;
 }

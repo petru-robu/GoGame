@@ -63,7 +63,7 @@ public:
     void setPosition(sf::Vector2f pos) override;
     void setString(const std::string& new_str) override;
     void setBorders(bool b);
-    bool hasBorders();
+    // bool hasBorders();
 
     void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor) override;
 
