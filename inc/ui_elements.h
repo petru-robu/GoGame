@@ -8,6 +8,7 @@
 #include "menu_interface.h"
 #include "drawable_interface.h"
 #include "resource_manager.h"
+#include "audio_player.h"
 
 class Label: public IDrawable
 {

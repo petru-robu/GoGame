@@ -73,7 +73,6 @@ void Label::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
     if(getBounds().contains({mx, my}))
         text.setFillColor(hoverColor);
 }
-/**************************************/
 
 Button::Button(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
     const std::string& font_path, sf::Vector2f position, bool hasBorders): 
@@ -174,7 +173,11 @@ void Button::HandleClick(const std::optional<sf::Event> &event)
             float my = mouseButtonPressed->position.y;
 
             if(this->getBounds().contains({mx, my}))
+            {
                 clicked = true;
+                AudioPlayer::getInstance().playButtonSound();
+            }
+                
         }
     }
 }

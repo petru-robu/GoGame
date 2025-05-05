@@ -215,6 +215,7 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
                 bool move_state = backend_board.addStone(cx, cy, turn);
                 if(move_state == true)
                 {
+                    AudioPlayer::getInstance().playPieceSound();
                     //next player turn
                     if(turn == CellType::WHITE)
                     {
@@ -224,6 +225,11 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
                     {
                         turn = CellType::WHITE;
                     }
+                }
+                else
+                {
+                    //invalid move
+                    AudioPlayer::getInstance().playErrorPieceSound();
                 }
             }
         }       

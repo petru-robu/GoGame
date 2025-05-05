@@ -10,11 +10,24 @@
 class AudioPlayer 
 {
 private:
-    std::vector<sf::Sound> activeSounds;
+    sf::Sound button_sound;
+    sf::Sound piece_sound;
+    sf::Sound error_piece_sound;
+
+    sf::Music music;
+
+    AudioPlayer();
+    AudioPlayer(const AudioPlayer&) = delete;
+    void operator=(const AudioPlayer&) = delete;
     
 public:
-    void playSound(const std::string& path);
-    void update();
+
+    static AudioPlayer& getInstance();
+
+    void playButtonSound();
+    void playPieceSound();
+    void playErrorPieceSound();
+    void playMusic();
 };
 
 

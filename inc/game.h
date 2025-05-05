@@ -16,7 +16,6 @@ class Game
 private:
     sf::RenderWindow window;
     GameContext ctx;
-    AudioPlayer audio_player;
 
     IMenu* menu;
     OptionsMenu* options_menu;

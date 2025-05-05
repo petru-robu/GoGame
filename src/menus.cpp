@@ -113,7 +113,7 @@ void OptionsMenu::EventHandler(const std::optional<sf::Event> &event)
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
-            ctx.setState(GameState::MAIN_MENU);
+            ctx.setState(ctx.getLastState());
         }
     }
 
