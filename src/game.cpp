@@ -23,7 +23,12 @@ Game::Game()
     {
         std::cerr<<e.what()<<"\n";
     }
-    
+}
+
+Game& Game::getInstance()
+{   
+    static Game instance;
+    return instance;
 }
 
 void Game::Init()

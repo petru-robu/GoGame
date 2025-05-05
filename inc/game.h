@@ -27,14 +27,16 @@ private:
     void Init();
     void changeState();
 
-public:
     Game();
-    
     Game(const Game& game) = delete;
     Game& operator=(const Game& game) = delete;
+
+public:
+
+    static Game& getInstance();
+    void Run();   
+
     ~Game();
-    
-    void Run();
 };
 
 
