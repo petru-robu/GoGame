@@ -7,17 +7,125 @@ The application is structured in the follwing sections: frontend and backend.
 ### Frontend
 The frontend was done using the [SFML library](https://www.sfml-dev.org/), a very useful tool for creating GUI in C++.
 The application makes use of some classes that deal with the visual aspect of the game: 
-- First of all, there is a menu system implemented. This is done by implementing an interface and down casting diffrent types of menus depending on the current state of the game.
-- Second of all, SFML only provides acces to various components of the PC, graphics, audio, network, etc. So, I implemented UI elements, like labels, buttons, sliders and more.
+
+#### UI Design
+The UI consists of *Label* and *Button* objects. Labels are understood as *drawable* elements and buttons are *labels* that are *clickable*.<br>
+*IDrawable* and *IClickable* interfaces are interfaces for drawable elements and clickable elements, respectively.
+  ```
+  class IDrawable
+  {
+  public:
+      IDrawable(sf::RenderWindow& window): window(window){}
+      virtual void Render() = 0;
+      virtual ~IDrawable() = default;
+  };
+  
+  class IClickable
+  {
+  public:
+      virtual void HandleClick(const std::optional<sf::Event> &event) = 0;
+      virtual bool WasClicked() const = 0;
+  };
+
+  class Label: public IDrawable
+  class Button: public Label, public IClickable
+  ```
+#### Visual Board Design
+An importand part of the application is the frontend for the board. The board is created by overlapping two grids, as in GO, we place on intersections, not in cells. So, there is a grid of cells, and then lines of the board are drew over the grid. The *VisualBoard* object is also an *IDrawable*. The *VisualBoard* consists also of two *std::vectors* of *Pieces* and *Liberties*, where *Piece* is a template *Cell* object with *sf::CircleShape* as type and *Liberty* with *sf::RectangleShape* as type, like below:
+```
+template <typename DT>
+class Cell : public IDrawable
+{};
+class Piece: public Cell<sf::CircleShape>
+{};
+class Liberty: public Cell<sf::RectangleShape>
+{};
+
+class VisualBoard: public IDrawable
+{
+private:
+    BackendBoard backend_board;
+    std::vector<std::vector<Piece>> piece_grid;
+    std::vector<std::vector<Liberty>> liberty_grid;
+
+public:
+    void manageHovers(sf::Vector2i mouse_pos);
+    void manageMouseClick(sf::Vector2i mouse_pos, CellType& turn);
+};
+```
+#### Resource Manager
+Resource managers are very useful when designing a frontend. The *Resource Manager* class manages the loading of fonts, textures and sounds.
+```
+class ResourceManager
+{
+private:
+    std::map<std::string, std::shared_ptr<sf::Font>> fonts;
+    std::map<std::string, std::shared_ptr<sf::Texture>> textures;
+public:
+    static ResourceManager& getInstance();
+    std::shared_ptr<sf::Font> getFont(const std::string& path);
+    std::shared_ptr<sf::Texture> getTexture(const std::string& path);
+};
+```
+Also, for being consistent with a theme, I created a namespace with the colors for the application.
+```
+namespace Colors
+{
+    const sf::Color RED      = sf::Color(255, 0, 0, 255);
+    const sf::Color BUTTON_COLOR = sf::Color(255, 174, 0);
+    const sf::Color BOARD_BACKGROUND_COLOR = sf::Color(252, 144, 3);
+    const sf::Color PIECE_HOVER_COLOR = sf::Color(255, 0, 0, 100);
+    const sf::Color LIBERTY_COLOR = sf::Color(255, 234, 0);
+}
+```
 
 ### Backend
-The backend is the most intricate part of the implementation. I decided to go with the following when implementing the game logic:
-- The backend consists of a grid of Intersections. Every intersection is of a certain type (WHITE, BLACK, WHITE_LIBERTY, BLACK_LIBERTY or EMPTY).
-- For efficiency and not recomputing the state of the board every move, there are groups of stones, which reference intersections. In a group of stones we have a set of pieces and a set of liberties. Also, every intersection references a group of stones as well (may be null, if an intersection is not part of a group). When th groups become connected, they are merged. For further optimization, the groups merge by size(merge the smaller group to the bigger one). 
+The backend is the most intricate part of the implementation. I decided to go with the following when implementing the game logic: <br>
+The *BackendBoard* is the heart of the application. The board is a matrix of *intersections*. Through the backend_board object we also maintain the group of stones as a std::set of *Groups*. 
+-  An Intersection can be of a certain type (WHITE, BLACK or LIBERTY)
+-  An Intersection points to multiple Groups it belongs to.
+-  A Group can be of a certain type (WHITE or BLACK).
+-  A Group consists of two sets of intersection. One set represent the stones of the group, and the other, it's liberties. 
+
+```
+class Group;
+class Intersection
+{
+private:
+    std::pair<int, int> coords;
+    CellType type;
+    std::set<Group*> groups;
+};  
+
+class Group
+{
+private:
+    CellType group_type;
+    std::set<Intersection*> stones;
+    std::set<Intersection*> liberties;
+public:
+    Group();
+    void extend(const Group* group);
+};
+
+class BackendBoard
+{
+private:
+    std::vector<std::vector<Intersection>> board_matrix;
+    std::set<Group*> white_groups;
+    std::set<Group*> black_groups;
+public:
+    void addStone(int cx, int cy, CellType type);
+};
+```
+When adding a stone or modifying the board's current configuration, the groups are adjusted dynamically. This is a tricky process split into multiple parts: adding a stone, managing group merges, managing captures, managing suicide situations and managing the [Ko rule](https://www.pandanet.co.jp/English/learning_go/learning_go_8.html). The Ko rule is implemented using [Zobrist Hashing](https://en.wikipedia.org/wiki/Zobrist_hashing) for efficient computation of past moves.
+
+
+
 
 ## Compilation instructions
-The project is configured via [CMake](https://cmake.org/).
-0. Necessary libraries on linux (assuming debian installation).
+The project is configured via [CMake](https://cmake.org/). <br>
+Necessary libraries on linux (assuming debian installation).
 ```sh
 sudo apt-get update && \
   sudo apt-get install libxrandr-dev \
@@ -84,39 +192,39 @@ cmake --install build --config Debug --prefix install_dir
 
 #### Cerințe
 - [X] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
-- [ ] moșteniri:
+- [X] moșteniri:
   - minim o clasă de bază și **3 clase derivate** din aceeași ierarhie
   - ierarhia trebuie să fie cu bază proprie, nu derivată dintr-o clasă predefinită
   - [X] funcții virtuale (pure) apelate prin pointeri de bază din clasa care conține atributul de tip pointer de bază
     - minim o funcție virtuală va fi **specifică temei** (i.e. nu simple citiri/afișări sau preluate din biblioteci i.e. draw/update/render)
     - constructori virtuali (clone): sunt necesari, dar nu se consideră funcții specifice temei
     - afișare virtuală, interfață non-virtuală
-  - [ ] apelarea constructorului din clasa de bază din constructori din derivate
-  - [ ] clasă cu atribut de tip pointer la o clasă de bază cu derivate; aici apelați funcțiile virtuale prin pointer de bază, eventual prin interfața non-virtuală din bază
-    - [ ] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
-    - [ ] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens
-    - [ ] smart pointers (recomandat, opțional)
-- [ ] excepții
-  - [ ] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim **3** clase pentru erori specifice distincte
+  - [X] apelarea constructorului din clasa de bază din constructori din derivate
+  - [X] clasă cu atribut de tip pointer la o clasă de bază cu derivate; aici apelați funcțiile virtuale prin pointer de bază, eventual prin interfața non-virtuală din bază
+    - [X] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
+    - [X] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens
+    - [X] smart pointers (recomandat, opțional)
+- [X] excepții
+  - [X] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim **3** clase pentru erori specifice distincte
     - clasele de excepții trebuie să trateze categorii de erori distincte (exemplu de erori echivalente: citire fișiere cu diverse extensii)
-  - [ ] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
+  - [X] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
   - această ierarhie va fi complet independentă de ierarhia cu funcții virtuale
-- [ ] funcții și atribute `static`
+- [X] funcții și atribute `static`
 - [X] STL
 - [X] cât mai multe `const`
-- [ ] funcții *de nivel înalt*, de eliminat cât mai mulți getters/setters/funcții low-level
+- [X] funcții *de nivel înalt*, de eliminat cât mai mulți getters/setters/funcții low-level
 - [X] minim 75-80% din codul propriu să fie C++
 - [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate** din aceeași ierarhie
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
   - noua derivată va fi integrată în codul existent (adică va fi folosită, nu adăugată doar ca să fie)
-- [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.2`
+- [X] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.2`
 
 ### Tema 3:
 
 #### Cerințe
 - [ ] 2 șabloane de proiectare (design patterns)
-- [ ] o clasă șablon cu sens; minim **2 instanțieri**
-  - [ ] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
+- [X] o clasă șablon cu sens; minim **2 instanțieri**
+  - [X] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
 - [ ] minim 85% din codul propriu să fie C++
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
