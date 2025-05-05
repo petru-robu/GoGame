@@ -11,10 +11,12 @@
 class MainMenu : public IMenu
 {
 private:
-    Label title;
-    Label play_button;
-    Label options_button;
-    Label exit_button;
+    Label *title;
+    Button *play_button;
+    Button *options_button;
+    Button *exit_button;
+
+    std::vector<IDrawable*> ui_elements;
 
     sf::Sprite backgroundSprite;
 
@@ -30,8 +32,10 @@ public:
 class OptionsMenu : public IMenu
 {
 private:
-    Label back_button;
+    Button* back_button;
     
+    std::vector<IDrawable*> ui_elements;
+
     sf::Sprite backgroundSprite;
 public:
     OptionsMenu(sf::RenderWindow &window, GameContext &ctx);
@@ -44,18 +48,19 @@ public:
 class SelectorMenu : public IMenu
 {
 private:
-    Label select_board_size;
-    Label select_game_type;
-    Label play_button;
-    Label back_button;
+    Label* select_board_size;
+    Label* select_game_type;
+    Button* play_button;
+    Button* back_button;
 
-    LabelBox l_9x9;
-    LabelBox l_13x13;
-    LabelBox l_19x19;
+    Button* l_9x9;
+    Button* l_13x13;
+    Button* l_19x19;
 
-    LabelBox l_AI;
-    LabelBox l_LOCAL;
+    Button* l_AI;
+    Button* l_LOCAL;
     
+    std::vector<IDrawable*> ui_elements;
 
     sf::Sprite backgroundSprite;
 

@@ -73,43 +73,45 @@ void Label::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
     if(getBounds().contains({mx, my}))
         text.setFillColor(hoverColor);
 }
+/**************************************/
 
-LabelBox::LabelBox(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
-const std::string& font_path, sf::Vector2f position, bool borders): 
-Label(window, str, ch_size, color, font_path, position), 
-borders(borders)
+Button::Button(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
+    const std::string& font_path, sf::Vector2f position, bool hasBorders): 
+    Label(window, str, ch_size, color, font_path, position)
+    {
+        borders = hasBorders;
+        
+        auto text_bounds = text.getGlobalBounds();
+        border.setSize({text_bounds.size.x + 10, text_bounds.size.y + 10});
+        border.setOrigin({border.getSize().x/2, border.getSize().y/2});
+        border.setPosition(position);
+
+        border.setOutlineColor(color);
+        border.setFillColor(sf::Color(255, 255, 255, 0));
+        border.setOutlineThickness(3.f);
+    }
+
+sf::FloatRect Button::getBounds() const
 {
-    auto text_bounds = text.getGlobalBounds();
-    border.setSize({text_bounds.size.x + 10, text_bounds.size.y + 10});
-    border.setOrigin({border.getSize().x/2, border.getSize().y/2});
-    border.setPosition(position);
-
-    border.setOutlineColor(color);
-    border.setFillColor(sf::Color(255, 255, 255, 0));
-    border.setOutlineThickness(3.f);
-}
-
-sf::FloatRect LabelBox::getBounds() const
-{
-    if(borders)
+    if(borders == true)
         return border.getGlobalBounds();
     else
         return text.getGlobalBounds();
 }
 
-void LabelBox::setColor(const sf::Color& col)
+void Button::setColor(const sf::Color& col)
 {
     Label::setColor(col);
     border.setOutlineColor(col);
 }
 
-void LabelBox::setPosition(sf::Vector2f pos)
+void Button::setPosition(sf::Vector2f pos)
 {
     Label::setPosition(pos);
     border.setPosition(pos);
 }   
 
-void LabelBox::setString(const std::string &new_str)
+void Button::setString(const std::string &new_str)
 {
     Label::setString(new_str);
     auto text_bounds = text.getGlobalBounds();
@@ -118,12 +120,12 @@ void LabelBox::setString(const std::string &new_str)
     border.setPosition(position);
 }
 
-void LabelBox::setBorders(bool b)
+void Button::setBorders(bool b)
 {
     borders = b;
 }
 
-void LabelBox::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
+void Button::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
 {
     float mx = mouse_pos.x;
     float my = mouse_pos.y;
@@ -149,10 +151,41 @@ void LabelBox::colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor)
     }   
 }
 
-void LabelBox::Render()
+bool Button::hasBorders()
+{
+    return borders;
+}
+
+void Button::Render()
 {
     window.draw(text);
 
     if(borders)
         window.draw(border);
 }
+
+void Button::HandleClick(const std::optional<sf::Event> &event)
+{
+    if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+    {
+        if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+        {
+            float mx = mouseButtonPressed->position.x;
+            float my = mouseButtonPressed->position.y;
+
+            if(this->getBounds().contains({mx, my}))
+                clicked = true;
+        }
+    }
+}
+
+bool Button::WasClicked() const
+{
+    return clicked;
+}
+
+void Button::ResetClick()
+{
+    clicked = false;
+}
+

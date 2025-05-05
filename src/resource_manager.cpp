@@ -38,3 +38,20 @@ std::shared_ptr<sf::Texture> ResourceManager::getTexture(const std::string& path
     return texture;
 
 }
+
+std::shared_ptr<sf::SoundBuffer> ResourceManager::getSoundBuffer(const std::string& path) 
+{
+    if (soundBuffers.find(path) != soundBuffers.end())
+        return soundBuffers[path];
+
+    auto buffer = std::make_shared<sf::SoundBuffer>();
+
+    if (!buffer->loadFromFile(path))
+    {
+        std::cerr<<"Cannot load sounds!";
+        return nullptr;
+    }
+
+    soundBuffers[path] = buffer;
+    return buffer;
+}

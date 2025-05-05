@@ -9,12 +9,14 @@
 #include "game_context.h"
 #include "game_window.h"
 #include "menu_interface.h"
+#include "audio_player.h"
 
 class Game
 {
 private:
     sf::RenderWindow window;
     GameContext ctx;
+    AudioPlayer audio_player;
 
     IMenu* menu;
     OptionsMenu* options_menu;

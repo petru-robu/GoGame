@@ -12,12 +12,16 @@ private:
     VisualBoard* visual_board;
     CellType turn;
 
-    Label title;
-    Label end_game_button;
-    Label clear_board_button;
+    Label* title;
+    Button* end_game_button;
+    Button* clear_board_button;
+    Button* options_menu_button;
+    Button* pass_button;
 
-    Label to_play;
-    Label game_type_label;
+    Label* to_play;
+    Label* game_type_label; 
+
+    std::vector<IDrawable*> ui_elements;
 
     sf::Sprite backgroundSprite;
     
@@ -39,11 +43,14 @@ private:
     VisualBoard* visual_board;
     CellType turn;
 
-    Label title;
-    Label end_game_button;
-    Label clear_board_button;
+    Label* title;
+    Button* end_game_button;
+    Button* clear_board_button;
+    Button* options_menu_button;
     
-    Label game_type_label;
+    Label* game_type_label;
+
+    std::vector<IDrawable*> ui_elements;
 
     sf::Sprite backgroundSprite;
     

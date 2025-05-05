@@ -14,4 +14,13 @@ public:
     virtual ~IDrawable() = default;
 };
 
+class IClickable
+{
+public:
+    virtual void HandleClick(const std::optional<sf::Event> &event) = 0;
+    virtual bool WasClicked() const = 0;
+    virtual void ResetClick() = 0;
+    virtual ~IClickable() = default;
+};
+
 #endif

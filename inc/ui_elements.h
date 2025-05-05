@@ -39,32 +39,60 @@ public:
 
     void Render() override;
 
-    ~Label() override = default;
+    virtual ~Label() override = default;
 };
 
-class LabelBox: public Label
+class Button: public Label, public IClickable
 {
 protected:
+    bool clicked = false;
     bool borders;
     sf::RectangleShape border;
 
 public:
-    LabelBox(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
-    const std::string& font_path, sf::Vector2f position, bool borders);
+    Button(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
+    const std::string& font_path, sf::Vector2f position, bool hasBorders = false);
+    
+    void HandleClick(const std::optional<sf::Event> &event) override;
+    bool WasClicked() const override;
+    void ResetClick() override;
 
     sf::FloatRect getBounds() const override;
-
     void setColor(const sf::Color& col) override;
     void setPosition(sf::Vector2f pos) override;
     void setString(const std::string& new_str) override;
     void setBorders(bool b);
+    bool hasBorders();
 
     void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor) override;
 
     void Render() override;
 
-    ~LabelBox() override = default;
 };
+
+// class LabelBox: public Label
+// {
+// protected:
+//     bool borders;
+//     sf::RectangleShape border;
+
+// public:
+//     LabelBox(sf::RenderWindow& window, const std::string& str, float ch_size, sf::Color color, 
+//     const std::string& font_path, sf::Vector2f position, bool borders);
+
+//     sf::FloatRect getBounds() const override;
+
+//     void setColor(const sf::Color& col) override;
+//     void setPosition(sf::Vector2f pos) override;
+//     void setString(const std::string& new_str) override;
+//     void setBorders(bool b);
+
+//     void colorOnHover(sf::Vector2i mouse_pos, sf::Color hoverColor) override;
+
+//     void Render() override;
+
+//     ~LabelBox() override = default;
+// };
 
 
 #endif

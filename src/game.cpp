@@ -47,14 +47,23 @@ void Game::changeState()
     else if(ctx.getState() == GameState::LOCAL_GAMEPLAY && 
     ctx.getState()  != ctx.getPrevState())
     {
-        local_game_window = new LocalGameWindow(window, ctx);
+        if(ctx.getGameRunningState() == false)
+        {
+            local_game_window = new LocalGameWindow(window, ctx);
+            ctx.setGameRunningState(true);
+        }
+
         menu = local_game_window;
         ctx.setPrevState(ctx.getState());
     }
     else if(ctx.getState() == GameState::AI_GAMEPLAY &&
     ctx.getState() != ctx.getPrevState())
     {
-        ai_game_window = new AIGameWindow(window, ctx);
+        if(ctx.getGameRunningState() == false)
+        {
+            ai_game_window = new AIGameWindow(window, ctx);
+            ctx.setGameRunningState(true);
+        }
         menu = ai_game_window;
         ctx.setPrevState(ctx.getState());
     } 
@@ -63,6 +72,7 @@ void Game::changeState()
 void Game::Run()
 {
     Init();
+    std::vector<sf::Sound> activeSounds;
     
     while(window.isOpen())
     {
@@ -72,9 +82,44 @@ void Game::Run()
 
         while (const std::optional event = window.pollEvent()) 
         {
+            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                if (keyPressed->scancode == sf::Keyboard::Scancode::Space)
+                {
+                    // Load the sound buffer
+                    sf::SoundBuffer buff;
+                    if (buff.loadFromFile("audio/ou.wav"))
+                    {
+                        sf::Sound sound(buff);
+                        sound.setVolume(100);  // Optional, set volume here if necessary
+                        sound.play();
+                        
+                        // Store the sound in the activeSounds vector to keep it alive
+                        activeSounds.push_back(std::move(sound));  
+                    }
+                    else
+                    {
+                        std::cerr << "Failed to load sound file!" << std::endl;
+                    }
+                }
+            }
+
             menu->EventHandler(event);
         }
 
+        for (auto it = activeSounds.begin(); it != activeSounds.end(); )
+        {
+            if (it->getStatus() == sf::SoundSource::Status::Stopped)
+            {
+                // Remove stopped sounds from the vector
+                it = activeSounds.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+        //audio_player.update();
         menu->Render();
     }
 }

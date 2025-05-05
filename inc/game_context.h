@@ -23,9 +23,12 @@ class GameContext
 private:
     GameState state;
     GameState prev_state;
+    GameState last_state;
 
     int game_size;
     GameType game_type;
+
+    bool game_running;
     
 public:
     explicit GameContext(int gs, GameType gt);
@@ -34,10 +37,13 @@ public:
     void setPrevState(GameState ps);
     void setGameSize(int gs);
     void setGameType(GameType gt);
+    void setGameRunningState(bool gr);
 
     GameState getState() const;
     GameState getPrevState() const;
+    GameState getLastState() const;
     int getGameSize() const;
+    bool getGameRunningState() const;
 };
 
 #endif
