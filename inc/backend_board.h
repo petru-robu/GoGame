@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "group.h"
+#include "game_exceptions.h"
 
 class BackendBoard
 {
@@ -21,7 +22,7 @@ private:
 public:
     explicit BackendBoard();
 
-    bool addStone(int cx, int cy, CellType type);
+    void addStone(int cx, int cy, CellType type);
 
     const std::vector<std::vector<Intersection>>& getBoardMatrix() const;
 

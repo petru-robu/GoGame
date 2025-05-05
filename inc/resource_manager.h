@@ -8,6 +8,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+#include "game_exceptions.h"
+
 
 class ResourceManager
 {

@@ -15,8 +15,7 @@ std::shared_ptr<sf::Font> ResourceManager::getFont(const std::string& path)
 
     if(!font->openFromFile(path))
     {
-        std::cerr<<"Cannot open font!";
-        return nullptr;
+        throw ResourceLoadException(path);
     }
     fonts[path] = font;
     return font;
@@ -31,8 +30,7 @@ std::shared_ptr<sf::Texture> ResourceManager::getTexture(const std::string& path
 
     if(!texture->loadFromFile(path))
     {
-        std::cerr<<"Cannot load texture!";
-        return nullptr;
+        throw ResourceLoadException(path);
     }
     textures[path] = texture;
     return texture;
@@ -48,8 +46,7 @@ std::shared_ptr<sf::SoundBuffer> ResourceManager::getSoundBuffer(const std::stri
 
     if (!buffer->loadFromFile(path))
     {
-        std::cerr<<"Cannot load sounds!";
-        return nullptr;
+        throw ResourceLoadException(path);
     }
 
     soundBuffers[path] = buffer;

@@ -98,15 +98,14 @@ void BackendBoard::capture(Group* captured_group)
         update_liberties(adj_group);
 }
 
-bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
+void BackendBoard::addStone(int cx, int cy, CellType cell_type)
 {
     Intersection* curr_inter = &board_matrix[cx][cy];
     CellType initial_type = curr_inter->getType();
 
     if(initial_type == CellType::WHITE || initial_type == CellType::BLACK)
     {
-        std::cout<<"Cannot place stone here! Space taken!";
-        return false;
+        throw InvalidMoveException("Placing on occupied space!");
     }
     else if(initial_type == CellType::LIBERTY)
     {
@@ -167,12 +166,12 @@ bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
         if(hasFriendlyGroup && !friendlyGroupAlive && !hasEmptyNeighbour && enemy_capture_cnt == 0)
         {
             //This move is suicide (do not allow)
-            std::cout<<"1_Suicide!\n";
-
+            //std::cout<<"1_Suicide!\n";
             //revert changes
             for(auto grp:groups_of_covered_liberty)
                 grp->addLiberty(curr_inter);
-            return false;
+
+            throw InvalidMoveException("Suicide move!");
         }
 
         //get the friendly adjacent groups
@@ -236,7 +235,7 @@ bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
             if(eye_type != CellType::EMPTY && eye_type != cell_type && enemy_capture_cnt == 0) 
             {
                 //This move is suicide (do not allow)
-                std::cout<<"2_Suicide!\n";
+                //std::cout<<"2_Suicide!\n";
 
                 //revert changes
                 curr_inter->setType(CellType::LIBERTY);
@@ -246,14 +245,14 @@ bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
                 for(auto grp:groups_of_covered_liberty)
                     grp->addLiberty(curr_inter);
 
-                return false;
+                throw InvalidMoveException("Suicide move!");
             }
         }
         
         //managing of merges
         if(!to_merge_with.empty())
         {
-            std::cout<<"Merging with "<<to_merge_with.size()<<" groups!\n";
+            //std::cout<<"Merging with "<<to_merge_with.size()<<" groups!\n";
 
             for(auto group_to_merge:to_merge_with)
             {   
@@ -311,7 +310,6 @@ bool BackendBoard::addStone(int cx, int cy, CellType cell_type)
             white_groups.insert(newGroup);
         }
     }
-    return true;
 }
 
 const std::vector<std::vector<Intersection>>& BackendBoard::getBoardMatrix() const

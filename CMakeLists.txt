@@ -68,6 +68,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     ./src/group.cpp
     ./src/resource_manager.cpp
     ./src/audio_player.cpp
+    ./src/game_exceptions.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

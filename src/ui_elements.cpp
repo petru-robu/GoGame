@@ -18,16 +18,22 @@ void Label::calculatePosition()
 
 void Label::loadProprieties()
 {
-    auto loaded_font = ResourceManager::getInstance().getFont(font_path);
-    
-    if(loaded_font != nullptr)
-        text.setFont(*loaded_font);
+    try
+    {
+        auto loaded_font = ResourceManager::getInstance().getFont(font_path);
+        if(loaded_font != nullptr)
+            text.setFont(*loaded_font);
 
-    text.setString(str);
-    text.setCharacterSize(ch_size);
-    text.setFillColor(color);
+        text.setString(str);
+        text.setCharacterSize(ch_size);
+        text.setFillColor(color);
 
-    calculatePosition();
+        calculatePosition();
+    }
+    catch(const ResourceLoadException& e)
+    {
+        std::cerr << "Resource error: "<< e.what() << '\n';
+    }
 }
 
 /* Setters */

@@ -212,9 +212,9 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
                 int cx = cell.getCoordX();
                 int cy = cell.getCoordY();
 
-                bool move_state = backend_board.addStone(cx, cy, turn);
-                if(move_state == true)
+                try
                 {
+                    backend_board.addStone(cx, cy, turn);
                     if(GameContext::getInstance().getSoundsEnabled())
                     {
                         AudioPlayer::getInstance().playPieceSound();
@@ -229,15 +229,18 @@ void VisualBoard::manageMouseClick(sf::Vector2i mouse_pos, CellType& turn)
                     {
                         turn = CellType::WHITE;
                     }
+                        
                 }
-                else
+                catch (const InvalidMoveException& e)
                 {
                     //invalid move
                     if(GameContext::getInstance().getSoundsEnabled())
                     {
                         AudioPlayer::getInstance().playErrorPieceSound();
                     }
-                }   
+
+                    std::cout<<e.what()<<"\n";
+                }
             }
         }       
     }

@@ -8,14 +8,22 @@ Game::Game()
     window.create(sf::VideoMode({window_width, window_height}), "Go Game!");
     window.setFramerateLimit(60);
 
-    options_menu = new OptionsMenu(window);
-    main_menu = new MainMenu(window);
-    selector_menu = new SelectorMenu(window);
+    try
+    {
+        options_menu = new OptionsMenu(window);
+        main_menu = new MainMenu(window);
+        selector_menu = new SelectorMenu(window);
 
-    ai_game_window = nullptr;
-    local_game_window = nullptr;
+        ai_game_window = nullptr;
+        local_game_window = nullptr;
 
-    menu = main_menu;
+        menu = main_menu;
+    }
+    catch (const ResourceLoadException& e)
+    {
+        std::cerr<<e.what()<<"\n";
+    }
+    
 }
 
 void Game::Init()
