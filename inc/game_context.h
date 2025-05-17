@@ -2,6 +2,8 @@
 #define GAME_CONTEXT_H
 #include <SFML/Graphics.hpp>
 
+#include "theme.h"
+
 enum class GameState 
 {
     MAIN_MENU,
@@ -33,6 +35,9 @@ private:
     bool music_enabled = true;
     bool liberties_enabled = false;
 
+    Theme curr_theme;
+    Theme last_theme;
+
     GameContext();
     GameContext(const GameContext&) = delete;
     void operator=(const GameContext&) = delete;
@@ -46,6 +51,9 @@ public:
     void setGameType(GameType gt);
     void setGameRunningState(bool gr);
 
+    void setCurrentTheme(const Theme& th);
+    void setLastTheme(const Theme& th);
+
     void setEnableSounds(bool es);
     void setEnableMusic(bool em);
     void setEnableLiberties(bool el);
@@ -55,6 +63,9 @@ public:
     GameState getLastState() const;
     int getGameSize() const;
     bool getGameRunningState() const;
+
+    Theme getCurrentTheme() const;
+    Theme getLastTheme() const;
 
     bool getSoundsEnabled() const;
     bool getMusicEnabled() const;

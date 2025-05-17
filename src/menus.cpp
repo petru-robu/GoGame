@@ -23,7 +23,7 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     exit_button->setPosition({wx/2.f, wy/2.f});
 
     sf::Color sprite_color = backgroundSprite.getColor();
-    sprite_color.a = 80;
+    sprite_color.a = 230;
     backgroundSprite.setColor(sprite_color);
 }
 
@@ -108,15 +108,19 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     sounds_enabled = new Label(window, "Toggle Sounds:", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {mx-400,my-300});
     music_enabled = new Label(window, "Toggle Music:", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {mx-400,my-200});
     liberties_enabled = new Label(window, "Toggle visible liberties:", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {mx-400,my-100});
+    theme_selector = new Label(window, "Board Theme:", 40.f, Colors::TITLE_COLOR, "fonts/shuriken.ttf", {mx-400, my});
     
     sounds_enabled_on = new Button(window, "on", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+300,my-300}, true);
-    sounds_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+400,my-300}, false);
+    sounds_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+420,my-300}, false);
 
     music_enabled_on = new Button(window, "on", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+300,my-200}, true);
-    music_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+400,my-200}, false);
+    music_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+420,my-200}, false);
 
     liberties_enabled_on = new Button(window, "on", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+300,my-100}, false);
-    liberties_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+400,my-100}, true);
+    liberties_enabled_off = new Button(window, "off", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+420,my-100}, true);
+
+    light_theme_button = new Button(window, "light", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+300, my}, true);
+    dark_theme_button = new Button(window, "dark", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx+420, my}, false);
 
     back_button->setPosition({mx, my+200});
 
@@ -124,15 +128,20 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     ui_elements.push_back(sounds_enabled);
     ui_elements.push_back(music_enabled);
     ui_elements.push_back(liberties_enabled);
+    ui_elements.push_back(theme_selector);
+
     ui_elements.push_back(sounds_enabled_on);
     ui_elements.push_back(sounds_enabled_off);
     ui_elements.push_back(music_enabled_on);
     ui_elements.push_back(music_enabled_off);
     ui_elements.push_back(liberties_enabled_off);
     ui_elements.push_back(liberties_enabled_on);
+    ui_elements.push_back(dark_theme_button);
+    ui_elements.push_back(light_theme_button);
+
 
     sf::Color sprite_color = backgroundSprite.getColor();
-    sprite_color.a = 80;
+    sprite_color.a = 230;
     backgroundSprite.setColor(sprite_color);
 }
 
@@ -202,6 +211,20 @@ void OptionsMenu::EventHandler(const std::optional<sf::Event> &event)
         ctx.setEnableLiberties(false);
         liberties_enabled_on->setBorders(false);
         liberties_enabled_off->setBorders(true);
+    }
+
+    if(light_theme_button->WasClicked())
+    {
+        ctx.setCurrentTheme(lightTheme);
+        light_theme_button->setBorders(true);
+        dark_theme_button->setBorders(false);
+    }
+
+    if(dark_theme_button->WasClicked())
+    {
+        ctx.setCurrentTheme(darkTheme);
+        dark_theme_button->setBorders(true);
+        light_theme_button->setBorders(false);
     }
 
     for(IDrawable* el:ui_elements)
@@ -287,7 +310,7 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     ui_elements.push_back(l_LOCAL);
 
     sf::Color sprite_color = backgroundSprite.getColor();
-    sprite_color.a = 80;
+    sprite_color.a = 230;
     backgroundSprite.setColor(sprite_color);
 }
 
@@ -409,4 +432,23 @@ SelectorMenu::~SelectorMenu()
 {
     for(auto &el: ui_elements)
         delete el;
+}
+
+IMenu* MenuFactory::createMenu(sf::RenderWindow& window, const GameState& menu_type)
+{
+    switch(menu_type)
+    {
+    case GameState::MAIN_MENU:
+        return new MainMenu(window);
+    case GameState::OPTIONS:
+        return new OptionsMenu(window);
+    case GameState::SELECTOR_MENU:
+        return new SelectorMenu(window);
+    case GameState::LOCAL_GAMEPLAY:
+        return new LocalGameWindow(window);
+    case GameState::AI_GAMEPLAY:
+        return new AIGameWindow(window);
+    default:
+        return nullptr;
+    }
 }

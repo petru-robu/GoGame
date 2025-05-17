@@ -5,7 +5,12 @@ IMenu(window),
 turn(CellType::BLACK),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
-    visual_board = new VisualBoard(window);
+    GameContext& ctx = GameContext::getInstance();
+
+    backend_board = new BackendBoard;
+
+    VisualBoardBuilder builder(window, backend_board);
+    visual_board = builder.setTheme(ctx.getCurrentTheme()).build_background_grid().build_interactive_grid().get();
 
     title = new Label(window, "Game of Go", 35.f, Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {220, 70});
     end_game_button = new Button(window, "End Game", 30.f,  Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 130});
@@ -25,7 +30,7 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     ui_elements.push_back(pass_button);
 
     sf::Color sprite_color = backgroundSprite.getColor();
-    sprite_color.a = 80;
+    sprite_color.a = 230;
     backgroundSprite.setColor(sprite_color);
 }
 
@@ -60,8 +65,12 @@ void LocalGameWindow::EventHandler(const std::optional<sf::Event> &event)
 
     if(clear_board_button->WasClicked())
     {
+        delete backend_board;
+        backend_board = new BackendBoard;
+
         delete visual_board;
-        visual_board = new VisualBoard(window);
+        VisualBoardBuilder builder(window, backend_board);
+        visual_board = builder.setTheme(GameContext::getInstance().getCurrentTheme()).build_background_grid().build_interactive_grid().get();
     }
 
     if(options_menu_button->WasClicked())
@@ -126,6 +135,18 @@ void LocalGameWindow::Render()
 
 void LocalGameWindow::Process()
 {
+    GameContext& ctx = GameContext::getInstance();
+
+    if(ctx.getLastTheme().type != ctx.getCurrentTheme().type)
+    {
+        ctx.setLastTheme(ctx.getCurrentTheme());
+        std::cout<<"Changed theme!\n";
+        delete visual_board;
+
+        VisualBoardBuilder builder(window, backend_board);
+        visual_board = builder.setTheme(ctx.getCurrentTheme()).build_background_grid().build_interactive_grid().get();
+    }
+
     visual_board->process();
 
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
@@ -142,6 +163,7 @@ LocalGameWindow::~LocalGameWindow()
     for(auto &el: ui_elements)
         delete el;
         
+    delete backend_board;
     delete visual_board;
 }
 
@@ -150,10 +172,11 @@ IMenu(window),
 turn(CellType::BLACK),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
-    visual_board = new VisualBoard(window);
+    backend_board = new BackendBoard;
+    visual_board = new VisualBoard(window, *backend_board);
 
     sf::Color sprite_color = backgroundSprite.getColor();
-    sprite_color.a = 80;
+    sprite_color.a = 230;
     backgroundSprite.setColor(sprite_color);
 
     title = new Label(window, "AI is work in progress!\n\nPlease come back when it's ready.\n\nMeanwhile, you can play locally.", 35.f, Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {700, 350});
@@ -211,8 +234,8 @@ void AIGameWindow::EventHandler(const std::optional<sf::Event> &event)
 
     if(clear_board_button->WasClicked())
     {
-        delete visual_board;
-        visual_board = new VisualBoard(window);
+        delete backend_board;
+        backend_board = new BackendBoard;
     }
 
     if(options_menu_button->WasClicked())
@@ -256,5 +279,6 @@ AIGameWindow::~AIGameWindow()
     for(auto &el: ui_elements)
         delete el;
 
+    delete backend_board;
     delete visual_board;
 }

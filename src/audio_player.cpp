@@ -31,7 +31,7 @@ void AudioPlayer::playErrorPieceSound()
 }
 void AudioPlayer::playMusic()
 {
-    music.setVolume(90);
+    music.setVolume(110);
     music.setLooping(true);
     music.play();
 }

@@ -106,18 +106,18 @@ Liberty::~Liberty()
 
 }
 
-VisualBoard::VisualBoard(sf::RenderWindow& window): 
-IDrawable(window)
+VisualBoard::VisualBoard(sf::RenderWindow& window, BackendBoard& bb): 
+IDrawable(window),
+backend_board(bb)
+{}
+
+void VisualBoard::init_interactive_grid(const sf::Color& liberty_color)
 {
     float board_size = 800;
     float cornerX = 570, cornerY = 90;
     int game_size = GameContext::getInstance().getGameSize();
     
     float cell_size = board_size / game_size;
-
-    board_background.setFillColor(Colors::BOARD_BACKGROUND_COLOR);
-    board_background.setSize({board_size+100, board_size+100});
-    board_background.setPosition({cornerX-50, cornerY-50});
 
     /*piece grid*/
     for(int i=0; i<game_size; i++)
@@ -135,6 +135,7 @@ IDrawable(window)
         piece_grid.push_back(cell_line);
     }
 
+    /*liberty grid*/
     for(int i=0; i<game_size; i++)
     {
         std::vector<Liberty> cell_line;
@@ -144,11 +145,24 @@ IDrawable(window)
             float currY = cornerY + (j)*cell_size;
             
             Liberty lib(window, i, j, cell_size, {currX, currY});
-            lib.setColor(Colors::BLACK);
+            lib.setColor(liberty_color);
             cell_line.push_back(lib);
         }
         liberty_grid.push_back(cell_line);
     }
+}
+
+void VisualBoard::init_background_grid(const sf::Color& table_color, const sf::Color& grid_color)
+{
+    float board_size = 800;
+    float cornerX = 570, cornerY = 90;
+    int game_size = GameContext::getInstance().getGameSize();
+    
+    float cell_size = board_size / game_size;
+
+    board_background.setFillColor(table_color);
+    board_background.setSize({board_size+100, board_size+100});
+    board_background.setPosition({cornerX-50, cornerY-50});
 
     cornerX += cell_size/2;
     cornerY += cell_size/2;
@@ -156,25 +170,25 @@ IDrawable(window)
     for(int i=0; i<game_size; i++)
     {
         sf::RectangleShape grid_line_x;
-        grid_line_x.setFillColor(Colors::GRID_LINE_COLOR);
+        grid_line_x.setFillColor(grid_color);
         grid_line_x.setSize({2, cell_size*(game_size-1)});
         grid_line_x.setPosition({cornerX + (i)*cell_size, cornerY});
         grid_linesX.push_back(grid_line_x);
 
         sf::RectangleShape grid_line_y;
-        grid_line_y.setFillColor(Colors::GRID_LINE_COLOR);
+        grid_line_y.setFillColor(grid_color);
         grid_line_y.setSize({cell_size*(game_size-1), 2});
         grid_line_y.setPosition({cornerX, cornerY + (i)*cell_size});
         grid_linesY.push_back(grid_line_y);
 
         intersection_numbers.push_back(new Label(window, std::to_string(game_size - i), 25, 
-        Colors::BLACK, "fonts/arial-bold.ttf", {cornerX - 45, cornerY + (i)*cell_size}));
+        grid_color, "fonts/arial-bold.ttf", {cornerX - 45, cornerY + (i)*cell_size}));
         
         intersection_letters.push_back(new Label(window, std::string(1, 'A'+i), 25, 
-        Colors::BLACK, "fonts/arial-bold.ttf", {cornerX + (i)*cell_size, cornerY - 45}));
-
+        grid_color, "fonts/arial-bold.ttf", {cornerX + (i)*cell_size, cornerY - 45}));
     }
 }
+
 
 void VisualBoard::manageHovers(sf::Vector2i mouse_pos)
 {
@@ -276,7 +290,6 @@ void VisualBoard::process()
             if(cell_type == CellType::LIBERTY)
             {
                 liberty_grid[i][j].setPlaced(true);
-                liberty_grid[i][j].setColor(Colors::LIBERTY_COLOR);
             }
             else
                 liberty_grid[i][j].setPlaced(false);
@@ -327,4 +340,33 @@ VisualBoard::~VisualBoard()
 {
     for(auto label_ptr:intersection_numbers)
         delete label_ptr;
+}
+
+/*visual board builder*/
+VisualBoardBuilder::VisualBoardBuilder(sf::RenderWindow& window, BackendBoard* bb)
+{
+    visual_board = new VisualBoard(window, *bb);
+}
+
+VisualBoardBuilder& VisualBoardBuilder::setTheme(const Theme& th)
+{
+    theme = th;
+    return *this;
+}
+
+VisualBoardBuilder& VisualBoardBuilder::build_background_grid()
+{
+    visual_board->init_background_grid(theme.boardColor, theme.lineColor);
+    return *this;
+}
+
+VisualBoardBuilder& VisualBoardBuilder::build_interactive_grid()
+{
+    visual_board->init_interactive_grid(theme.libertyColor);
+    return *this;
+}
+
+VisualBoard* VisualBoardBuilder::get()
+{
+    return visual_board;
 }

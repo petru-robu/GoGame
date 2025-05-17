@@ -7,6 +7,7 @@
 #include "ui_elements.h"
 #include "menu_interface.h"
 #include "color_constants.h"
+#include "game_window.h"
 
 class MainMenu : public IMenu
 {
@@ -46,6 +47,9 @@ private:
 
     Label* liberties_enabled;
     Button* liberties_enabled_on, *liberties_enabled_off;
+
+    Label* theme_selector;
+    Button* light_theme_button, *dark_theme_button;
     
     std::vector<IDrawable*> ui_elements;
 
@@ -94,6 +98,12 @@ public:
     SelectorMenu(const SelectorMenu&) = delete;
     void operator=(const SelectorMenu&) = delete;
     ~SelectorMenu() override;
+};
+
+class MenuFactory
+{
+public:
+    static IMenu* createMenu(sf::RenderWindow& window, const GameState& menu_type);
 };
 
 #endif

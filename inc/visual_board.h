@@ -9,6 +9,7 @@
 #include "ui_elements.h"
 #include "color_constants.h"
 #include "audio_player.h"
+#include "theme.h"
 
 template <typename DT>
 class Cell : public IDrawable
@@ -69,7 +70,7 @@ public:
 class VisualBoard: public IDrawable
 {
 private:
-    BackendBoard backend_board;
+    BackendBoard& backend_board;
 
     sf::RectangleShape board_background;
 
@@ -83,15 +84,36 @@ private:
     std::vector<Label*> intersection_letters;
 
 public:
-    explicit VisualBoard(sf::RenderWindow& window);
+    explicit VisualBoard(sf::RenderWindow& window, BackendBoard& bb);
 
     void process();
     void manageHovers(sf::Vector2i mouse_pos);
     void manageMouseClick(sf::Vector2i mouse_pos, CellType& turn);
+
+    void init_background_grid(const sf::Color& table_color, const sf::Color& grid_color);
+    void init_interactive_grid(const sf::Color& liberty_color);
 
     void Render() override;
 
     ~VisualBoard() override;
 
 };
+
+class VisualBoardBuilder
+{
+private:
+    VisualBoard* visual_board;
+    Theme theme;
+
+public:
+    VisualBoardBuilder(sf::RenderWindow& window, BackendBoard* bb);
+    
+    VisualBoardBuilder& setTheme(const Theme& th);
+    VisualBoardBuilder& build_background_grid();
+    VisualBoardBuilder& build_interactive_grid();
+    
+    VisualBoard* get();
+};
+
+
 #endif

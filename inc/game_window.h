@@ -5,11 +5,13 @@
 #include "visual_board.h"
 #include "menu_interface.h"
 #include "color_constants.h"
+#include "theme.h"
 
 class LocalGameWindow : public IMenu
 {
 private:
     VisualBoard* visual_board;
+    BackendBoard* backend_board;
     CellType turn;
 
     Label* title;
@@ -41,6 +43,8 @@ class AIGameWindow : public IMenu
 {
 private:
     VisualBoard* visual_board;
+    BackendBoard* backend_board;
+
     CellType turn;
 
     Label* title;

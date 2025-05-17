@@ -1,7 +1,10 @@
 #include "../inc/game_context.h"
 
-GameContext::GameContext()
-{}
+GameContext::GameContext():
+curr_theme(lightTheme),
+last_theme(lightTheme)
+{
+}
 
 GameContext& GameContext::getInstance()
 {
@@ -44,6 +47,14 @@ void GameContext::setEnableLiberties(bool el)
 {
     liberties_enabled = el;
 }
+void GameContext::setCurrentTheme(const Theme& th)
+{
+    curr_theme = th;
+}
+void GameContext::setLastTheme(const Theme& th)
+{
+    last_theme = th;
+}
 
 
 //getters
@@ -79,4 +90,12 @@ bool GameContext::getMusicEnabled() const
 bool GameContext::getLibertiesEnabled() const
 {
     return liberties_enabled;
+}
+Theme GameContext::getCurrentTheme() const
+{
+    return curr_theme;
+}
+Theme GameContext::getLastTheme() const
+{
+    return last_theme;
 }

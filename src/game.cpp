@@ -10,9 +10,9 @@ Game::Game()
 
     try
     {
-        options_menu = new OptionsMenu(window);
-        main_menu = new MainMenu(window);
-        selector_menu = new SelectorMenu(window);
+        options_menu = dynamic_cast<OptionsMenu*>(MenuFactory::createMenu(window, GameState::OPTIONS));
+        main_menu = dynamic_cast<MainMenu*>(MenuFactory::createMenu(window, GameState::MAIN_MENU));
+        selector_menu = dynamic_cast<SelectorMenu*>(MenuFactory::createMenu(window, GameState::SELECTOR_MENU));
 
         ai_game_window = nullptr;
         local_game_window = nullptr;
@@ -35,6 +35,8 @@ void Game::Init()
 {
     GameContext::getInstance().setState(GameState::MAIN_MENU);
     GameContext::getInstance().setPrevState(GameState::OPTIONS);
+
+    GameContext::getInstance().setCurrentTheme(lightTheme);
 }
 
 void Game::changeState()
@@ -64,7 +66,7 @@ void Game::changeState()
     {
         if(ctx.getGameRunningState() == false)
         {
-            local_game_window = new LocalGameWindow(window);
+            local_game_window = dynamic_cast<LocalGameWindow*>(MenuFactory::createMenu(window, GameState::LOCAL_GAMEPLAY));
             ctx.setGameRunningState(true);
         }
 
@@ -76,7 +78,7 @@ void Game::changeState()
     {
         if(ctx.getGameRunningState() == false)
         {
-            ai_game_window = new AIGameWindow(window);
+            ai_game_window = dynamic_cast<AIGameWindow*>(MenuFactory::createMenu(window, GameState::AI_GAMEPLAY));
             ctx.setGameRunningState(true);
         }
         menu = ai_game_window;
