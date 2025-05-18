@@ -343,9 +343,9 @@ VisualBoard::~VisualBoard()
 }
 
 /*visual board builder*/
-VisualBoardBuilder::VisualBoardBuilder(sf::RenderWindow& window, BackendBoard* bb)
+VisualBoardBuilder::VisualBoardBuilder(sf::RenderWindow& window, BackendBoard* bb):
+theme(lightTheme)
 {
-    theme = lightTheme;
     visual_board = new VisualBoard(window, *bb);
 }
 

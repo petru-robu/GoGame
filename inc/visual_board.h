@@ -107,7 +107,7 @@ private:
 
 public:
     VisualBoardBuilder(sf::RenderWindow& window, BackendBoard* bb);
-    VisualBoardBuilder(const VisualBoardBuilder& other) = default;
+    VisualBoardBuilder(const VisualBoardBuilder& other) = delete;
     VisualBoard& operator=(const VisualBoard& other) = delete;
 
 

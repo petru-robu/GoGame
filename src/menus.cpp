@@ -325,7 +325,7 @@ void OptionsMenu::Render()
 
 void OptionsMenu::Process()
 {
-    GameContext& ctx = GameContext::getInstance();
+    const GameContext& ctx = GameContext::getInstance();
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
 
     for(IDrawable* el:ui_elements)
