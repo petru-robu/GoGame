@@ -202,7 +202,9 @@ cmake --install build --config Debug --prefix install_dir
 Some features to be added to the application:
 - Playing against a computer: KataGO agent.
 - Playing on a server.
-- Move History. Create an efficient system for keeping a history of moves. 
+- Move History. Create an efficient system for keeping a history of moves.
+
+![image](https://github.com/user-attachments/assets/f102ec76-f50f-4276-b0c8-cd341e280b68)
 
 ## Tasks
 ### Tema 0:
