@@ -15,8 +15,10 @@ private:
     Label *title;
     Button *play_button;
     Button *options_button;
+    Button *rules_button;
+    Button *controls_buttton;
     Button *exit_button;
-
+    
     std::vector<IDrawable*> ui_elements;
 
     sf::Sprite backgroundSprite;
@@ -99,6 +101,55 @@ public:
     void operator=(const SelectorMenu&) = delete;
     ~SelectorMenu() override;
 };
+
+class RulesMenu : public IMenu
+{
+private:
+    std::vector<IDrawable*> ui_elements;
+    sf::Sprite backgroundSprite;
+
+    Button* back_button;
+
+    Label* chinese_rules_title;
+    Label* chinese_rules;
+
+    Label* japanese_rules_title;
+    Label* japanese_rules;
+
+public:
+    explicit RulesMenu(sf::RenderWindow &window);
+
+    void Render() override;
+    void Process() override;
+    void EventHandler(const std::optional<sf::Event> &event) override;
+
+    RulesMenu(const RulesMenu&) = delete;
+    void operator=(const RulesMenu&) = delete;
+    ~RulesMenu() override;
+};
+
+class ControlsMenu : public IMenu
+{
+private:
+    std::vector<IDrawable*> ui_elements;
+    sf::Sprite backgroundSprite;
+
+    Button* back_button;
+
+    Label* controls_title;
+    Label* controls_contents;
+
+public:
+    explicit ControlsMenu(sf::RenderWindow &window);
+
+    void Render() override;
+    void Process() override;
+    void EventHandler(const std::optional<sf::Event> &event) override;
+
+    ControlsMenu(const ControlsMenu&) = delete;
+    void operator=(const ControlsMenu&) = delete;
+    ~ControlsMenu() override;
+}; 
 
 class MenuFactory
 {

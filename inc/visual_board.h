@@ -107,7 +107,10 @@ private:
 
 public:
     VisualBoardBuilder(sf::RenderWindow& window, BackendBoard* bb);
-    
+    VisualBoardBuilder(const VisualBoardBuilder& other) = default;
+    VisualBoard& operator=(const VisualBoard& other) = delete;
+
+
     VisualBoardBuilder& setTheme(const Theme& th);
     VisualBoardBuilder& build_background_grid();
     VisualBoardBuilder& build_interactive_grid();

@@ -19,6 +19,8 @@ private:
     Button* clear_board_button;
     Button* options_menu_button;
     Button* pass_button;
+    Button* controls_menu_button;
+    Button* rules_menu_button;
 
     Label* to_play;
     Label* game_type_label; 

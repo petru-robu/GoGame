@@ -20,6 +20,8 @@ private:
     OptionsMenu* options_menu;
     MainMenu* main_menu;
     SelectorMenu* selector_menu;
+    RulesMenu* rules_menu;
+    ControlsMenu* controls_menu;
 
     LocalGameWindow* local_game_window;
     AIGameWindow* ai_game_window;

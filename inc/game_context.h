@@ -11,6 +11,8 @@ enum class GameState
     OPTIONS,
     LOCAL_GAMEPLAY,
     AI_GAMEPLAY,
+    RULES_MENU,
+    CONTROLS_MENU,
     UNDEFINED
 };
 

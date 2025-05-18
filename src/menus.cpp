@@ -8,11 +8,15 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     play_button = new Button(window, "Play", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0, 0});
     options_button = new Button(window, "Options", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0, 0});
     exit_button = new Button(window, "Exit", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0, 0});
+    rules_button = new Button(window, "rules", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0, 0});
+    controls_buttton = new Button(window, "controls", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {0, 0});
 
     ui_elements.push_back(title);
     ui_elements.push_back(play_button);
     ui_elements.push_back(options_button);
     ui_elements.push_back(exit_button);
+    ui_elements.push_back(rules_button);
+    ui_elements.push_back(controls_buttton);
 
     float wx = window.getSize().x;
     float wy = window.getSize().y;
@@ -20,7 +24,11 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     title->setPosition({wx/2.f, wy/2.f-300});
     play_button->setPosition({wx/2.f, wy/2.f-200});
     options_button->setPosition({wx/2.f, wy/2.f-100});
-    exit_button->setPosition({wx/2.f, wy/2.f});
+    controls_buttton->setPosition({wx/2.f, wy/2.f});
+    rules_button->setPosition({wx/2.f, wy/2.f+100});
+    
+    exit_button->setPosition({wx/2.f, wy/2.f+200});
+    
 
     sf::Color sprite_color = backgroundSprite.getColor();
     sprite_color.a = 230;
@@ -34,6 +42,35 @@ void MainMenu::EventHandler(const std::optional<sf::Event> &event)
     {
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
             window.close();
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::M)
+        {
+            if(ctx.getMusicEnabled() == false)
+            {
+                AudioPlayer::getInstance().playMusic();
+                ctx.setEnableMusic(true);
+            }
+            else
+            {
+                AudioPlayer::getInstance().stopMusic();
+                ctx.setEnableMusic(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::N)
+        {
+            if(ctx.getSoundsEnabled()== false)
+            {
+                ctx.setEnableSounds(true);
+            }
+            else
+            {
+                ctx.setEnableSounds(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+
     }
 
     if (event->is<sf::Event::Closed>())
@@ -63,6 +100,18 @@ void MainMenu::EventHandler(const std::optional<sf::Event> &event)
     {
         play_button->ResetClick();
         ctx.setState(GameState::SELECTOR_MENU);
+    }
+
+    if(rules_button->WasClicked())
+    {
+        rules_button->ResetClick();
+        ctx.setState(GameState::RULES_MENU);
+    }
+
+    if(controls_buttton->WasClicked())
+    {
+        controls_buttton->ResetClick();
+        ctx.setState(GameState::CONTROLS_MENU);
     }
     
 }
@@ -154,6 +203,34 @@ void OptionsMenu::EventHandler(const std::optional<sf::Event> &event)
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
             ctx.setState(ctx.getLastState());
+        }
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::M)
+        {
+            if(ctx.getMusicEnabled() == false)
+            {
+                AudioPlayer::getInstance().playMusic();
+                ctx.setEnableMusic(true);
+            }
+            else
+            {
+                AudioPlayer::getInstance().stopMusic();
+                ctx.setEnableMusic(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::N)
+        {
+            if(ctx.getSoundsEnabled()== false)
+            {
+                ctx.setEnableSounds(true);
+            }
+            else
+            {
+                ctx.setEnableSounds(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
         }
     }
 
@@ -248,6 +325,7 @@ void OptionsMenu::Render()
 
 void OptionsMenu::Process()
 {
+    GameContext& ctx = GameContext::getInstance();
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
 
     for(IDrawable* el:ui_elements)
@@ -255,6 +333,50 @@ void OptionsMenu::Process()
         Button* btn = dynamic_cast<Button*>(el);
         if(btn != nullptr)
             btn->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
+    }
+
+    if(ctx.getMusicEnabled() == true)
+    {
+        music_enabled_on->setBorders(true);
+        music_enabled_off->setBorders(false);
+    }
+    else
+    {
+        music_enabled_off->setBorders(true);
+        music_enabled_on->setBorders(false);
+    }
+
+    if(ctx.getSoundsEnabled() == true)
+    {
+        sounds_enabled_on->setBorders(true);
+        sounds_enabled_off->setBorders(false);
+    }
+    else
+    {
+        sounds_enabled_off->setBorders(true);
+        sounds_enabled_on->setBorders(false);
+    }
+
+    if(ctx.getLibertiesEnabled() == true)
+    {
+        liberties_enabled_on->setBorders(true);
+        liberties_enabled_off->setBorders(false);
+    }
+    else
+    {
+        liberties_enabled_off->setBorders(true);
+        liberties_enabled_on->setBorders(false);
+    }
+
+    if(ctx.getCurrentTheme().type == ThemeType::DARK)
+    {
+        dark_theme_button->setBorders(true);
+        light_theme_button->setBorders(false);
+    }
+    else
+    {
+        light_theme_button->setBorders(true);
+        dark_theme_button->setBorders(false);
     }
 }
 
@@ -323,6 +445,31 @@ void SelectorMenu::EventHandler(const std::optional<sf::Event> &event)
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
            ctx.setState(GameState::MAIN_MENU);
+        }
+        if (keyPressed->scancode == sf::Keyboard::Scancode::M)
+        {
+            if(ctx.getMusicEnabled() == false)
+            {
+                AudioPlayer::getInstance().playMusic();
+                ctx.setEnableMusic(true);
+            }
+            else
+            {
+                AudioPlayer::getInstance().stopMusic();
+                ctx.setEnableMusic(false);
+            }
+        }
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::N)
+        {
+            if(ctx.getSoundsEnabled()== false)
+            {
+                ctx.setEnableSounds(true);
+            }
+            else
+            {
+                ctx.setEnableSounds(false);
+            }
         }
     }
 
@@ -434,6 +581,256 @@ SelectorMenu::~SelectorMenu()
         delete el;
 }
 
+RulesMenu::RulesMenu(sf::RenderWindow &window):
+IMenu(window),
+backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
+{
+    float mx = window.getSize().x/2;
+    float my = window.getSize().y/2;
+
+    back_button = new Button(window, "Back", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx, my+320}, false);
+    chinese_rules_title = new Label(window, "Chinese Rules", 40.f, Colors::BUTTON_COLOR, "fonts/shuriken.ttf", {mx,my-420});
+    japanese_rules_title = new Label(window, "Japanese Rules", 40.f, Colors::BUTTON_COLOR, "fonts/shuriken.ttf", {mx,my-30});
+
+    std::string chinese_rules_str = "1. Played on a 19x19 grid (can be smaller).\n"
+                                    "2. Players alternate placing one stone of their color on an empty point.\n"
+                                    "3. Stones with no liberties (empty adjacent points) are captured and removed.\n"
+                                    "4. Forbidden to play a stone that would have no liberties unless it captures.\n"
+                                    "5. Repeating the exact previous board position is not allowed (Ko rule).\n"
+                                    "6. Game ends by mutual pass.\n"
+                                    "7. Each player's score = stones on board + surrounded empty points.\n"
+                                    "8. Player with the higher score wins..\n";
+
+    std::string japanese_rules_str = "1. Played on a 19x19 grid (can be smaller).\n"
+                                    "2. Players alternate placing one stone of their color on an empty point.\n"
+                                    "3. Stones with no liberties (empty adjacent points) are captured and removed.\n"
+                                    "4. Forbidden to play a stone that would die immediately (suicide).\n"
+                                    "5. Repeating the exact previous board position is not allowed (Ko rule).\n"
+                                    "6. Game ends by two consecutive passes.\n"
+                                    "7. Each player's score = surrounded empty points + captured stones.\n"
+                                    "8. Player with the higher score wins.\n";
+
+    chinese_rules = new Label(window, chinese_rules_str, 27.f, Colors::TITLE_COLOR, "fonts/robot-crush.ttf", {mx+50, my-250});
+    japanese_rules = new Label(window, japanese_rules_str, 27.f, Colors::TITLE_COLOR, "fonts/robot-crush.ttf", {mx+50, my+150});
+
+    ui_elements.push_back(chinese_rules_title);
+    ui_elements.push_back(chinese_rules);
+    ui_elements.push_back(japanese_rules);
+    ui_elements.push_back(japanese_rules_title);
+    ui_elements.push_back(back_button);
+
+    sf::Color sprite_color = backgroundSprite.getColor();
+    sprite_color.a = 230;
+    backgroundSprite.setColor(sprite_color);
+}
+
+void RulesMenu::EventHandler(const std::optional<sf::Event> &event)
+{
+    GameContext& ctx = GameContext::getInstance();
+
+    if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+    {
+        if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+        {
+           ctx.setState(ctx.getLastState());
+        }
+        if (keyPressed->scancode == sf::Keyboard::Scancode::M)
+        {
+            if(ctx.getMusicEnabled() == false)
+            {
+                AudioPlayer::getInstance().playMusic();
+                ctx.setEnableMusic(true);
+            }
+            else
+            {
+                AudioPlayer::getInstance().stopMusic();
+                ctx.setEnableMusic(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::N)
+        {
+            if(ctx.getSoundsEnabled()== false)
+            {
+                ctx.setEnableSounds(true);
+            }
+            else
+            {
+                ctx.setEnableSounds(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+    }
+
+    if (event->is<sf::Event::Closed>())
+        window.close(); 
+
+    for(IDrawable* el:ui_elements)
+    {
+        Button* btn = dynamic_cast<Button*>(el);
+        if(btn != nullptr)
+        {
+            btn->HandleClick(event);
+        }      
+    }
+
+    if(back_button->WasClicked())
+    {
+        ctx.setState(ctx.getLastState());
+    }
+
+    for(IDrawable* el:ui_elements)
+    {
+        Button* btn = dynamic_cast<Button*>(el);
+        if(btn != nullptr)
+            btn->ResetClick();
+    }
+}
+
+void RulesMenu::Render()
+{
+    window.clear();
+    window.draw(backgroundSprite);
+
+    for(IDrawable* el:ui_elements)
+    {
+        el->Render();
+    }
+
+    window.display();
+}
+
+void RulesMenu::Process()
+{
+    sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+    back_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
+}
+
+RulesMenu::~RulesMenu()
+{
+    for(auto &el: ui_elements)
+        delete el;
+}
+
+ControlsMenu::ControlsMenu(sf::RenderWindow &window):
+IMenu(window),
+backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
+{
+    float mx = window.getSize().x/2;
+    float my = window.getSize().y/2;
+
+    back_button = new Button(window, "Back", 40.f, Colors::BUTTON_COLOR, "fonts/robot-crush.ttf", {mx, my+250}, false);
+    controls_title = new Label(window, "Controls", 40.f, Colors::BUTTON_COLOR, "fonts/shuriken.ttf", {mx,my-300});
+
+    std::string controls_contents_str = "ESC - Back\n"
+                                        "M - Mute Music\n"
+                                        "N - Mute Sounds\n"
+                                        "P - Pass Move\n"
+                                        "L - Toggle Liberties\n"
+                                        "Left/Right Click - Place Stone";
+
+    controls_contents = new Label(window, controls_contents_str, 40.f, Colors::TITLE_COLOR, "fonts/robot-crush.ttf", {mx+10, my-100});
+
+    ui_elements.push_back(controls_title);
+    ui_elements.push_back(controls_contents);
+    ui_elements.push_back(back_button);
+
+    sf::Color sprite_color = backgroundSprite.getColor();
+    sprite_color.a = 230;
+    backgroundSprite.setColor(sprite_color);
+}
+
+void ControlsMenu::EventHandler(const std::optional<sf::Event> &event)
+{
+    GameContext& ctx = GameContext::getInstance();
+
+    if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+    {
+        if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+        {
+           ctx.setState(ctx.getLastState());
+        }
+        if (keyPressed->scancode == sf::Keyboard::Scancode::M)
+        {
+            if(ctx.getMusicEnabled() == false)
+            {
+                AudioPlayer::getInstance().playMusic();
+                ctx.setEnableMusic(true);
+            }
+            else
+            {
+                AudioPlayer::getInstance().stopMusic();
+                ctx.setEnableMusic(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::N)
+        {
+            if(ctx.getSoundsEnabled()== false)
+            {
+                ctx.setEnableSounds(true);
+            }
+            else
+            {
+                ctx.setEnableSounds(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+    }
+
+    if (event->is<sf::Event::Closed>())
+        window.close(); 
+
+    for(IDrawable* el:ui_elements)
+    {
+        Button* btn = dynamic_cast<Button*>(el);
+        if(btn != nullptr)
+        {
+            btn->HandleClick(event);
+        }      
+    }
+
+    if(back_button->WasClicked())
+    {
+        ctx.setState(ctx.getLastState());
+    }
+
+    for(IDrawable* el:ui_elements)
+    {
+        Button* btn = dynamic_cast<Button*>(el);
+        if(btn != nullptr)
+            btn->ResetClick();
+    }
+}
+
+void ControlsMenu::Render()
+{
+    window.clear();
+    window.draw(backgroundSprite);
+
+    for(IDrawable* el:ui_elements)
+    {
+        el->Render();
+    }
+
+    window.display();
+}
+
+void ControlsMenu::Process()
+{
+    sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+    back_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
+}
+
+ControlsMenu::~ControlsMenu()
+{
+    for(auto &el: ui_elements)
+        delete el;
+}
+
+
 IMenu* MenuFactory::createMenu(sf::RenderWindow& window, const GameState& menu_type)
 {
     switch(menu_type)
@@ -448,6 +845,10 @@ IMenu* MenuFactory::createMenu(sf::RenderWindow& window, const GameState& menu_t
         return new LocalGameWindow(window);
     case GameState::AI_GAMEPLAY:
         return new AIGameWindow(window);
+    case GameState::RULES_MENU:
+        return new RulesMenu(window);
+    case GameState::CONTROLS_MENU:
+        return new ControlsMenu(window);
     default:
         return nullptr;
     }

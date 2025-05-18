@@ -5,7 +5,7 @@ IMenu(window),
 turn(CellType::BLACK),
 backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
 {
-    GameContext& ctx = GameContext::getInstance();
+    const GameContext& ctx = GameContext::getInstance();
 
     backend_board = new BackendBoard;
 
@@ -16,7 +16,10 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     end_game_button = new Button(window, "End Game", 30.f,  Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 130});
     clear_board_button = new Button(window, "Clear Board", 30.f,  Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 190});
     options_menu_button = new Button(window, "Options", 30.f, Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 250});
-    to_play = new Label(window, "Black to play", 30.f,  Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {1700, 130});
+    controls_menu_button = new Button(window, "Controls", 30.f, Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 310});
+    rules_menu_button = new Button(window, "Rules", 30.f, Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {220, 370});
+
+    to_play = new Label(window, "BLACK to play", 30.f,  Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {1700, 130});
     game_type_label = new Label(window, "Playing locally!", 30.f, Colors::TITLE_COLOR, "./fonts/shuriken.ttf", {1700, 70});
 
     pass_button = new Button(window, "pass move", 40.f, Colors::BUTTON_COLOR, "./fonts/robot-crush.ttf", {1700, 900}, true);
@@ -28,6 +31,8 @@ backgroundSprite(*ResourceManager::getInstance().getTexture("img/back.jpg"))
     ui_elements.push_back(to_play);
     ui_elements.push_back(game_type_label);
     ui_elements.push_back(pass_button);
+    ui_elements.push_back(rules_menu_button);
+    ui_elements.push_back(controls_menu_button);
 
     sf::Color sprite_color = backgroundSprite.getColor();
     sprite_color.a = 230;
@@ -38,10 +43,65 @@ void LocalGameWindow::EventHandler(const std::optional<sf::Event> &event)
 {
     if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
     {
+        GameContext& ctx = GameContext::getInstance();
+
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
         {
             GameContext::getInstance().setState(GameState::MAIN_MENU);
             GameContext::getInstance().setGameRunningState(false);
+        }
+
+        if (keyPressed->scancode == sf::Keyboard::Scancode::M)
+        {
+            if(ctx.getMusicEnabled() == false)
+            {
+                AudioPlayer::getInstance().playMusic();
+                ctx.setEnableMusic(true);
+            }
+            else
+            {
+                AudioPlayer::getInstance().stopMusic();
+                ctx.setEnableMusic(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+        if (keyPressed->scancode == sf::Keyboard::Scancode::N)
+        {
+            if(ctx.getSoundsEnabled()== false)
+            {
+                ctx.setEnableSounds(true);
+            }
+            else
+            {
+                ctx.setEnableSounds(false);
+            }
+            AudioPlayer::getInstance().playButtonSound();
+        }
+
+        if(keyPressed->scancode == sf::Keyboard::Scancode::P)
+        {
+            if(turn == CellType::WHITE)
+            {
+                turn = CellType::BLACK;
+                to_play->setString("BLACK to play");
+            }  
+            else
+            {
+                turn = CellType::WHITE;
+                to_play->setString("WHITE to play");
+            }    
+
+            AudioPlayer::getInstance().playButtonSound();
+        }
+
+        if(keyPressed->scancode == sf::Keyboard::Scancode::L)
+        {
+            if(ctx.getLibertiesEnabled() == false)
+                ctx.setEnableLiberties(true);
+            else
+                ctx.setEnableLiberties(false);
+
+            AudioPlayer::getInstance().playButtonSound();
         }
     }
 
@@ -88,6 +148,16 @@ void LocalGameWindow::EventHandler(const std::optional<sf::Event> &event)
         {
             turn = CellType::WHITE;
         }       
+    }
+
+    if(controls_menu_button->WasClicked())
+    {
+        GameContext::getInstance().setState(GameState::CONTROLS_MENU);
+    }
+
+    if(rules_menu_button->WasClicked())
+    {
+        GameContext::getInstance().setState(GameState::RULES_MENU);
     }
 
     for(IDrawable* el:ui_elements)
@@ -154,6 +224,8 @@ void LocalGameWindow::Process()
     clear_board_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
     options_menu_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
     pass_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
+    rules_menu_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
+    controls_menu_button->colorOnHover(mouse_pos, Colors::TEXT_HOVER_COLOR);
 
     visual_board->manageHovers(mouse_pos);
 }

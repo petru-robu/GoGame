@@ -13,6 +13,8 @@ Game::Game()
         options_menu = dynamic_cast<OptionsMenu*>(MenuFactory::createMenu(window, GameState::OPTIONS));
         main_menu = dynamic_cast<MainMenu*>(MenuFactory::createMenu(window, GameState::MAIN_MENU));
         selector_menu = dynamic_cast<SelectorMenu*>(MenuFactory::createMenu(window, GameState::SELECTOR_MENU));
+        rules_menu = dynamic_cast<RulesMenu*>(MenuFactory::createMenu(window, GameState::RULES_MENU));
+        controls_menu = dynamic_cast<ControlsMenu*>(MenuFactory::createMenu(window, GameState::CONTROLS_MENU));
 
         ai_game_window = nullptr;
         local_game_window = nullptr;
@@ -61,6 +63,19 @@ void Game::changeState()
         menu = selector_menu;
         ctx.setPrevState(ctx.getState());
     }
+    else if(ctx.getState() == GameState::RULES_MENU &&
+    ctx.getState()  != ctx.getPrevState())
+    {
+        menu = rules_menu;
+        ctx.setPrevState(ctx.getState());
+    }
+    else if(ctx.getState() == GameState::CONTROLS_MENU &&
+    ctx.getState()  != ctx.getPrevState())
+    {
+        menu = controls_menu;
+        ctx.setPrevState(ctx.getState());
+    }
+
     else if(ctx.getState() == GameState::LOCAL_GAMEPLAY && 
     ctx.getState()  != ctx.getPrevState())
     {
@@ -124,4 +139,6 @@ Game::~Game()
     delete selector_menu;
     delete options_menu;
     delete main_menu;
+    delete rules_menu;
+    delete controls_menu;
 }
