@@ -41,20 +41,24 @@ public:
     ~LocalGameWindow() override;
 };
 
+
 class AIGameWindow : public IMenu
 {
 private:
     VisualBoard* visual_board;
     BackendBoard* backend_board;
-
     CellType turn;
 
     Label* title;
     Button* end_game_button;
     Button* clear_board_button;
     Button* options_menu_button;
-    
-    Label* game_type_label;
+    Button* pass_button;
+    Button* controls_menu_button;
+    Button* rules_menu_button;
+
+    Label* to_play;
+    Label* game_type_label; 
 
     std::vector<IDrawable*> ui_elements;
 
@@ -71,5 +75,6 @@ public:
 
     ~AIGameWindow() override;
 };
+
 
 #endif
