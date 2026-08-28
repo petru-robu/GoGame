@@ -1,6 +1,8 @@
 # Go Game
 An implementation of the Game of Go, done in C++ using the SFML library. The application simulates the go rules and applies them to the board. The game can be played locally by two players. In the future, the application should support playing on a server and playing against an AI agent.
 
+![demo-go.gif](./demo-go.gif)
+
 ## Implementation details
 The application is structured in the follwing sections: **frontend** and **backend**.
 
@@ -160,7 +162,9 @@ When adding a stone or modifying the board's current configuration, the groups a
 
 ## Compilation instructions
 The project is configured via [CMake](https://cmake.org/). <br>
-Necessary libraries on linux (assuming debian installation).
+Necessary libraries on linux:
+
+Debian:
 ```sh
 sudo apt-get update && \
   sudo apt-get install libxrandr-dev \
@@ -174,6 +178,22 @@ sudo apt-get update && \
     libdrm-dev \
     libgbm-dev \
     libfreetype6-dev
+```
+
+Fedora:
+```sh
+sudo dnf install \
+  libXrandr-devel \
+  libXcursor-devel \
+  systemd-devel \
+  openal-soft-devel \
+  flac-devel \
+  libvorbis-devel \
+  mesa-libGL-devel \
+  mesa-libEGL-devel \
+  libdrm-devel \
+  mesa-libgbm-devel \
+  freetype-devel
 ```
 
 1. Configuration
@@ -202,12 +222,12 @@ cmake --install build --config Debug --prefix install_dir
 Some features to be added to the application:
 - Playing against a computer: KataGO agent.
 - Playing on a server.
-- Move History. Create an efficient system for keeping a history of moves. 
+- Move History. Create an efficient system for keeping a history of moves.
 
 ## Resources
 
 - [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
-  - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
+- [OpenAL](https://openal-soft.org/) (LGPL)
 - [Robot-Crush Font](https://www.dafont.com/robot-crush.font)
 - [Shuriken Font](https://www.dafont.com/the-last-shuriken.font)
 - [Arial Font](https://font.download/font/arial)
